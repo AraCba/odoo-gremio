@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_gestion_de_cambios_filter" model="ir.ui.view">
+        <field name="name">docentes.gestion_de_cambios.select.inherit</field>
+        <field name="model">docentes.gestion_de_cambios</field>
+        <field name="arch" type="xml">
+            <search string="Gestion de cambios">
+                <!--field name="docente" filter_domain="[('docente','ilike',self)]" string="Docente" />
+                <field name="descripcion" filter_domain="[('descripcion','ilike',self)]" string="Descripción"/>
+                <filter icon="terp-personal" name="todos_afiliados" domain="[('estado', 'in', ['activo','juba', 'becariea', 'contratadea'])]" string="Cotizantes" help="Afiliades cotizantes"/>
+                <filter icon="terp-personal" name="pasivos" domain="[('estado', 'in', ['pasivo', 'pend_a','becarie', 'jub','contratade'])]" string="No cotizantes" />
+
+                <filter string="Pendientes" name="pendientes" icon="terp-personal" domain="[('estado', 'in', ['pend_a','pend_b'])]" help="Pendientes"/>
+                <separator/>
+                <filter icon="terp-personal" name="activos" domain="[('estado', '=', 'activo')]" string="Activos" />
+                <filter icon="terp-personal" name="pasivos" domain="[('estado', '=', 'pasivo')]" string="Pasivos" />
+                <filter icon="terp-personal" name="pendientes_alta" domain="[('estado', '=', 'pend_a')]" string="Pendientes de Alta" />
+                <filter icon="terp-personal" name="jubilados" domain="[('estado', 'in', ['jub','juba'])]" string="Jubilades" />
+                <filter icon="terp-personal" name="contratades" domain="[('estado', 'in', ['contratade','contratadea'])]" string="Contratades" />
+                <filter icon="terp-personal" name="becaries" domain="[('estado', 'in', ['becarie','becariea'])]" string="Becaries" />
+                <filter icon="terp-personal" name="bajas" domain="[('estado', '=', 'baja')]" string="Baja" />
+                <filter icon="terp-personal" name="historicos" domain="[('estado', '=', 'hist')]" string="Histórico" />
+                <filter icon="terp-personal" name="observados" domain="[('observado', '=', True)]" string="Observado" /-->
+                <group expand="1" string="Group By ..">
+	            <filter name="descripcion" string="Descripción / situacion" domain="[]" context="{'group_by':'descripcion'}"/>
+                    <filter name="fecha_de_consulta" string="Fecha de consulta"  domain="[]" context="{'group_by':'fecha_de_consulta'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="gestion_de_cambios_tree_view">
+        <field name="name">gestion_de_cambios.tree</field>
+        <field name="model">docentes.gestion_de_cambios</field>
+        <field name="arch" type="xml">
+            <tree string="Gestión de cambios">
+                <field name="docente"/>
+                <field name="situacion"/>
+                <field name="fecha_consulta"/>
+                <field name="fecha_desde"/>
+                <field name="fecha_hasta"/>
+                <field name="descripcion"/>
+
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="gestion_de_cambios_form_view">
+        <field name="name">gestion_de_cambios_docentes_aportes.form</field>
+        <field name="model">docentes.gestion_de_cambios</field>
+        <field name="arch" type="xml">
+            <form string="Gestión de cambios">
+                <field name="docente"/>
+                <field name="situacion"/>
+                <field name="fecha_consulta"/>
+                <field name="fecha_desde"/>
+                <field name="fecha_hasta"/>
+                <field name="descripcion"/>
+            </form>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_gestion_de_cambios">
+        <field name="name">Gestión de cambios</field>
+        <field name="res_model">docentes.gestion_de_cambios</field>
+        <field name="domain">[]</field>
+        <field name="search_view_id" ref="gestion_de_cambios_tree_view"/>
+    </record>
+    <menuitem name="Gestion de cambios" id="gestion_de_cambios" parent="base.menu_docentes_aportes" groups="base.group_aportes_gestion_de_cambios" sequence="4" action="action_gestion_de_cambios"/>
+</odoo>
+

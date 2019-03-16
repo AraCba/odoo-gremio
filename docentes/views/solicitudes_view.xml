@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem name="Accion social" id="base.menu_docentes_accion_social" sequence="2" parent="base.menu_docentes"/>
+
+
+
+    <!--record id="view_res_partner_docentes_filter" model="ir.ui.view">
+        <field name="name">Solicitudes Search</field>
+        <field name="model">docentes.solicitudes</field>
+        <field name="arch" type="xml">
+            <search string="Solicitudes">
+                <field name="name" filter_domain="[('name','in',self.padres.name)]" />
+                <field name="legajo" filter_domain="[('legajo','=',self)]" string="Legajo"/>
+             </search>
+        </field>
+    </record-->
+ 
+
+
+
+    <record model="ir.ui.view" id="solicitudes_tree_view">
+        <field name="name">Solicitudes</field>
+        <field name="model">docentes.solicitudes</field>
+        <field name="arch" type="xml">
+            <tree string="Solicitudes">
+                <field name="docente"/>
+                <field name="estado"/>
+                <field name="tipo"/>
+                <field name="fecha_sol"/>
+                <field name="fecha_ult_estado"/>
+                <field name="doc_completa"/>
+            </tree>
+        </field>
+    </record>
+
+
+
+
+    <record model="ir.ui.view" id="solicitudes_form_view">
+        <field name="name">Solicitudes</field>
+        <field name="model">docentes.solicitudes</field>
+        <field name="arch" type="xml">
+            <form string="Solicitudes">
+                <sheet>
+                    <group>
+                        <field name="docente"/>
+                        <field name="estado"/>
+                        <field name="tipo"/>
+                        <field name="fecha_sol"/>
+                        <field name="fecha_ult_estado"/>
+                        <field name="doc_completa"/>
+                        <field name="expediente"/>
+                        <field name="resolucion"/>
+                        <field name="observaciones"/>
+                    </group>
+
+ <!-- context="{'partner_id': docente.id }"-->
+            <notebook position="inside">
+                <page string="Bolsones" attrs="{'invisible': [('tipo','not in',['bol_esc', 'bol_nac'])]}">
+                    <field name="bolsones" nolabel="1" widget="one2many_list" mode="tree,kanban"> 
+                        <tree string="bolsones"  editable="bottom">
+                            <field name="menor" domain="[('verificado','=',True)]" />
+                            <field name="nivel"/>
+                            <field name="entregado"/>
+                        </tree>
+                    </field>
+ 
+                </page>
+
+                <page string="Subsidios" attrs="{'invisible': [('tipo','in',['bol_esc', 'bol_nac'])]}">
+                   <group>
+                            <field name="monto_sol"/>
+                            <field name="monto_aut"/>
+                            <field name="monto_ren"/>
+                    </group>
+
+ 
+                </page>
+
+            </notebook>
+
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_solicitudes">
+        <field name="name">Solicitudes</field>
+        <field name="res_model">docentes.solicitudes</field>
+        <!--field name="domain">[('estado','in',['sol', 'aut','rec'])]</field>
+        <field name="search_view_id" ref="solicitudes_view_filter"/-->
+    </record>
+
+    <menuitem name="Solicitudes" id="menu_docentes_solicitudes" parent="base.menu_docentes_accion_social" groups="base.group_gestion_solicitudes" sequence="1" action="action_solicitudes" />
+</odoo>
+

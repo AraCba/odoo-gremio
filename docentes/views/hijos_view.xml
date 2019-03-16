@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--menuitem name="Accion social" id="base.menu_docentes_accion_social" sequence="2" parent="base.menu_docentes"/-->
+
+    <record model="ir.ui.view" id="hijos_tree_view">
+        <field name="name">Menores a cargo</field>
+        <field name="model">docentes.hijos</field>
+        <field name="arch" type="xml">
+            <tree string="Menores a cargo">
+                <field name="name"/>
+                <field name="dni"/>
+                <field name="fecha_nac"/>
+                <field name="verificado"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="hijos_form_view">
+        <field name="name">Menores a cargo</field>
+        <field name="model">docentes.hijos</field>
+        <field name="arch" type="xml">
+            <form string="Menores a cargo">
+                <sheet>
+                    <group>
+                        <field name="padres"/>
+                        <field name="name"/>
+                        <field name="dni"/>
+                        <field name="fecha_nac"/>
+                        <field name="discapacidad"/>
+                        <field name="verificado"/>
+                        <field name="observaciones"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_hijos">
+        <field name="name">Menores a cargo</field>
+        <field name="res_model">docentes.hijos</field>
+        <field name="domain">[]</field>
+        <field name="search_view_id" ref="hijos_form_view"/>
+    </record>
+    <menuitem name="Menores a cargo" id="menu_docentes_hijos" parent="base.menu_docentes_accion_social" groups="base.group_accion_social" sequence="10" action="action_hijos" />
+</odoo>
+

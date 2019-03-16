@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+docentes_usuario,Docentes/Usuarios,model_model_docente,docentes.base.group_docentes_usuarios,1,0,0,0
+docente_modificacion_contacto,Modificacion de contacto,model_model_docente,docentes.base.group_docentes_modificacion_de_contactos,1,1,0,0
+

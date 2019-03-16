@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="base.group_docentes_usuarios" model="res.groups">
+            <field name="name">Docentes / Usuarios</field>
+            <field name="comment">Este usuario podrá ver la información de los docentes.</field>
+        </record>
+        <record id="base.group_docentes_modificacion_de_contactos" model="res.groups">
+            <field name="name">Docentes / Modificación de contactos</field>
+            <field name="comment">Este usuario podrá modificar información del contacto pero no de afiliación.</field>
+        </record>
+        <record id="base.group_docentes_administracion_de_afiliados" model="res.groups">
+            <field name="name">Docentes / Administración de afiliación</field>
+            <field name="comment">Este usuario podrá agregar nuevos docentes y cambiar campos no permitidios.</field>
+        </record>
+        <record id="base.group_docentes_administracion_avanzada" model="res.groups">
+            <field name="name">Docentes / Administración avanzada</field>
+            <field name="comment">Este usuario podrá modificar cualquier valor de los docentes y dar de alta a los docentes.</field>
+        </record>
+        <record id="base.group_aportes_usuario" model="res.groups">
+            <field name="name">Aportes / Usuarios</field>
+            <field name="comment">Este usuario podrá ver los aportes de los docentes</field>
+        </record>    
+        <record id="base.group_aportes_crear" model="res.groups">
+            <field name="name">Aportes / Crear aportes</field>
+            <field name="comment">Este usuario podrá crear aportes y ver todos los aportes</field>
+        </record> 
+ 	<record id="base.group_aportes_gestion_de_cambios" model="res.groups">
+            <field name="name">Aportes / Gestion de cambios</field>
+            <field name="comment">Este usuario podrá manejar la gestion de cambios</field>
+        </record>
+        <record id="base.group_mails_listado" model="res.groups">
+            <field name="name">Mail / Listados</field>
+            <field name="comment">Este usuario podra ver los mail de los docentes </field>
+        </record>
+
+        <record id="base.group_accion_social" model="res.groups">
+            <field name="name">Acción Social</field>
+            <field name="comment">Este usuario podra realizar tareas realcionadas con acción social </field>
+        </record>
+
+        <record id="base.group_gestion_solicitudes" model="res.groups">
+            <field name="name">Gestión de Solicitudes</field>
+            <field name="comment">Este usuario podra realizar tareas realcionadas con solicitudes de les afiliades </field>
+
+        </record>
+
+    </data>
+</odoo>
+
