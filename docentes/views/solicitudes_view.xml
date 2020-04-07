@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <menuitem name="Accion social" id="base.menu_docentes_accion_social" sequence="2" parent="base.menu_docentes"/>
-
-
 
     <!--record id="view_res_partner_docentes_filter" model="ir.ui.view">
         <field name="name">Solicitudes Search</field>
@@ -14,18 +13,16 @@
              </search>
         </field>
     </record-->
- 
 
-
-
+    <!-- Vista de lista -->
     <record model="ir.ui.view" id="solicitudes_tree_view">
         <field name="name">Solicitudes</field>
         <field name="model">docentes.solicitudes</field>
         <field name="arch" type="xml">
             <tree string="Solicitudes">
                 <field name="docente"/>
-                <field name="estado"/>
-                <field name="tipo"/>
+                <field name="state"/>
+                <field name="tipo_solicitud"/>
                 <field name="fecha_sol"/>
                 <field name="fecha_ult_estado"/>
                 <field name="doc_completa"/>
@@ -33,53 +30,57 @@
         </field>
     </record>
 
-
-
-
+    <!-- Vista de formulario -->
     <record model="ir.ui.view" id="solicitudes_form_view">
         <field name="name">Solicitudes</field>
         <field name="model">docentes.solicitudes</field>
         <field name="arch" type="xml">
             <form string="Solicitudes">
+                <header>
+                    <button name="autorizar" type="object" states="sol" string="Autorizar" class="oe_highlight"/>
+                    <button name="rechazar" type="object" states="sol" string="Rechazar"/>
+                    <button name="finalizar" type="object" states="aut" string="Finalizar" class="oe_highlight"/>
+                    <button name="cancelar" type="object" states="sol,aut,fin" string="Cancelar" />
+                    <field name="state" widget="statusbar" statusbar_visible="sol,aut,rec,fin,can" />
+                </header>
+
                 <sheet>
                     <group>
-                        <field name="docente"/>
-                        <field name="estado"/>
-                        <field name="tipo"/>
-                        <field name="fecha_sol"/>
-                        <field name="fecha_ult_estado"/>
-                        <field name="doc_completa"/>
-                        <field name="expediente"/>
-                        <field name="resolucion"/>
-                        <field name="observaciones"/>
+                        <field name="mostrar_bolsones" invisible="1" />
+                        <field name="mostrar_subsidios" invisible="1" />
+                        <field name="tipo_solicitud" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}" domain="[('activo','=',True)]"/>
+                        <field name="docente" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>                                 
+                        <field name="fecha_sol" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                        <field name="fecha_ult_estado" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                        <field name="doc_completa" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                        <field name="expediente" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                        <field name="resolucion" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                        <field name="observaciones" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                        <field name="responsable" attrs="{'readonly': [('state', 'in', ['can','rec'])]}"/>
                     </group>
 
- <!-- context="{'partner_id': docente.id }"-->
-            <notebook position="inside">
-                <page string="Bolsones" attrs="{'invisible': [('tipo','not in',['bol_esc', 'bol_nac'])]}">
-                    <field name="bolsones" nolabel="1" widget="one2many_list" mode="tree,kanban"> 
-                        <tree string="bolsones"  editable="bottom">
-                            <field name="menor" domain="[('verificado','=',True)]" />
-                            <field name="nivel"/>
-                            <field name="entregado"/>
-                        </tree>
-                    </field>
- 
-                </page>
+                    <!-- context="{'partner_id': docente.id }"-->
+                    <notebook position="inside">
+                        <page string="Bolsones" attrs="{'invisible': [('mostrar_bolsones','=', False)]}">
+                            <field name="bolsones" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"> 
+                                <tree string="bolsones"  editable="bottom">
+                                    <field name="menor" domain="[('verificado','=',True)]" />
+                                    <field name="nivel"/>
+                                    <field name="entregado"/>
+                                </tree>
+                            </field>
+                        </page>
 
-                <page string="Subsidios" attrs="{'invisible': [('tipo','in',['bol_esc', 'bol_nac'])]}">
-                   <group>
-                            <field name="monto_sol"/>
-                            <field name="monto_aut"/>
-                            <field name="monto_ren"/>
-                    </group>
-
- 
-                </page>
-
-            </notebook>
-
-
+                        <page string="Subsidios" attrs="{'invisible': [('mostrar_subsidios','=', False)]}">
+                            <group>
+                                <field name="monto_sol" attrs="{'readonly': [('state', '!=', 'nue')]}"/>
+                                <field name="monto_aut" attrs="{'readonly': [('state', '!=', 'sol')]}"/>
+                                <field name="monto_ren" attrs="{'readonly': [('state', '!=', 'aut')]}"/>
+                                <field name="monto_ren" attrs="{'readonly': [('state', '!=', 'aut')]}"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -93,5 +94,5 @@
     </record>
 
     <menuitem name="Solicitudes" id="menu_docentes_solicitudes" parent="base.menu_docentes_accion_social" groups="base.group_gestion_solicitudes" sequence="1" action="action_solicitudes" />
-</odoo>
 
+</odoo>

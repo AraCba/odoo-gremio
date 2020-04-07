@@ -33,7 +33,7 @@ Este módulo permite gestionar Docentes y Afiliados de una asociación.
 Incorpora nueva información a la categoría Partner y menúes específicos para filtar la información. También incorpora operaciones para gestionar los aportes y solicitudes de bolsones y subsidios. 
     """,
     'author': "Araceli Acosta, Jonathan Mutal, Mauricio Clerici",
-    'depends': ['base'],
+    'depends': ['base','smile_log','mail'],
     'data': [
         'security/docentes_security.xml',
         'views/docentes_view.xml',
@@ -41,9 +41,12 @@ Incorpora nueva información a la categoría Partner y menúes específicos para
         'views/aportes_view.xml',
         'views/hijos_view.xml',
         'views/solicitudes_view.xml',
+        'views/tipo_solicitud_view.xml',
         'views/gestion_de_cambios_view.xml',
         'views/docentes_altas_view.xml',
-        'wizard/gestion_de_cambios_wizard_view.xml'
+        'data/email_template.xml',
+        'wizard/gestion_de_cambios_wizard_view.xml',
+        
     ],
     'application': True,
 }

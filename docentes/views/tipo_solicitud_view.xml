@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+	
+	<!-- Vista de lista -->
+	<record model="ir.ui.view" id="tipo_solicitud_tree_view">
+		<field name="name">Tipo de solicitudes</field>
+		<field name="model">docentes.tipo_solicitud</field>
+		<field name="arch" type="xml">
+			<tree string="Tipo de solicitudes">
+				<field name="name" />
+				<field name="grupos" />
+				<field name="activo" />
+			</tree>
+		</field>
+	</record>
+
+	<!-- Vista de formulario -->
+	<record model="ir.ui.view" id="tipo_solicitud_form_view">
+		<field name="name">Tipo de solicitudes</field>
+		<field name="model">docentes.tipo_solicitud</field>
+		<field name="arch" type="xml">
+			<form string="Tipo de solicitudes">
+				<sheet>
+					<group>
+						<field name="name" attrs="{'readonly': [('id', '>', '0')]}"/>
+						<field name="grupos" />
+						<field name="activo" />
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- Action del menú de Tipo de solicitudes -->
+    <record model="ir.actions.act_window" id="action_tipo_solicitudes">
+        <field name="name">Tipo de solicitudes</field>
+        <field name="res_model">docentes.tipo_solicitud</field>
+	</record>
+	
+	<!-- Entrada en el menú -->
+	<menuitem name="Tipo de solicitudes" id="menu_docentes_tipo_solicitudes" 
+		parent="base.menu_docentes_accion_social" 
+		groups="base.group_gestion_solicitudes" 
+		sequence="10" 
+		action="action_tipo_solicitudes" />
+
+
+</odoo>
