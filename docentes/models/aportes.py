@@ -22,7 +22,6 @@
 from odoo import api, fields, models, _
 from odoo.addons.docentes.models.base import Base
 
-
 TIPO_APORTE = [
     ('640', 'Descuento cod 640'),
     ('ACT', 'Cuota activo manual'),
@@ -40,6 +39,7 @@ class DocentesAportes(models.Model):
     _name = 'docentes.aportes'
     _order = 'fecha desc, nombre, codigo'
     _description = 'Modelo para los aportes'
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
 
     docente = fields.Many2one('res.partner',
         string='Docente',
@@ -51,6 +51,11 @@ class DocentesAportes(models.Model):
     codigo = fields.Selection(TIPO_APORTE,'Codigo', required=True)
     aporte = fields.Float('Aporte', required=True)
 
+    codigo_aporte = fields.Many2one('docentes.codigo_aporte', string='Codigo de aporte')
+    categoria_aporte = fields.Many2one('docentes.categoria_aporte', string='Categoria del aporte')
+    caracter_aporte = fields.Many2one('docentes.caracter_aporte', string='Caracter del aporte')
+    dependencia_aporte = fields.Many2one('docentes.dependencia_aporte', string='Dependencia del aporte')
+    subdependencia_aporte = fields.Many2one('docentes.subdependencia_aporte', string='Subdependencia del aporte')
 
     @api.model
     @api.depends('docente','legajo', 'nombre', 'fecha')

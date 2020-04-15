@@ -78,6 +78,7 @@ class DocentesSolicitudes(models.Model):
     _name = 'docentes.solicitudes'
     _order = 'fecha_sol desc, fecha_ult_estado desc, docente'
     _description = 'Modelo Solicitudes de servicios a afiliados'
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
 
     docente = fields.Many2one('res.partner',
                               string='Docente',
@@ -130,9 +131,18 @@ class DocentesSolicitudes(models.Model):
     mostrar_subsidios = fields.Boolean(string='ocultar_bolsones', 
                         compute="_onchange_tipo_solicitud", 
                         store = False)
-    estado_anterior = fields.Char(string='estado_anterior', 
-                        compute="_onchange_state", 
-                        store = False)
+
+    # Este campo se agrega para ser usado en el envío de mail
+    # No se almacena
+    # estado_anterior = fields.Char(string='estado_anterior')
+
+    # log_messages = message_ids = fields.One2many(compute='_log_messages')
+    # def _log_messages(self) :
+    #     return self.env['mail.message'].search([
+    #         ('model', '=', self._name),
+    #         ('message_type', '=', 'notification'),
+    #         ('res_id', '=', self.id)
+    #     ])
 
     def _logAction(self, json):
         logger = SmileDBLogger(self._cr.dbname, 'docentes.solicitudes', self.id, self._uid)
@@ -147,67 +157,74 @@ class DocentesSolicitudes(models.Model):
         # solicitud.state = 'sol'
         return solicitud
 
-    @api.model
+    @api.multi
     def write(self, vals):
         if ('state' in vals.keys()) :
-            logjson = {'oldstate':{'state':self.state}, 'newstate':{'state':vals['state']}}
-            self._logAction(logjson)
-            # Acá se debe enviar el mail
+            # Esta linea hace que se vuelva a invocar al metodo write, pero es necesaria
+            # para hacer efectiva la carga del campo estado_anterior que no es almacenable
+            # De todos modos no almacena el valor en la base 
+            vals.update({'estado_anterior': self.state})
+
         solicitud = super(DocentesSolicitudes, self).write(vals)
+
+        if ('state' in vals.keys()) :
+            logjson = {'oldstate':{'state':self.estado_anterior}, 'newstate':{'state':self.state}}
+            self._logAction(logjson)
+            self._notificar_cambio_estado()
+
         return solicitud
 
     def autorizar(self):
         for record in self:
-            self._onchange_state()
-            record.write({'state': 'aut', 'fecha_ult_estado': date.today()})
+            record.write({'state': 'aut', 'estado_anterior': self.state, 'fecha_ult_estado': date.today()})
         return
     
     def rechazar(self):
         for record in self:
-            self._onchange_state()
-            record.write({'state': 'rec', 'fecha_ult_estado': date.today()})
+            record.write({'state': 'rec', 'estado_anterior': self.state, 'fecha_ult_estado': date.today()})
         return
 
     def finalizar(self):
         for record in self:
-            self._onchange_state()
-            record.write({'state': 'fin', 'fecha_ult_estado': date.today()})
+            record.write({'state': 'fin', 'estado_anterior': self.state, 'fecha_ult_estado': date.today()})
         return
 
     def cancelar(self):
         for record in self:
-            self._onchange_state()
-            record.write({'state': 'can', 'fecha_ult_estado': date.today()})
+            record.write({'state': 'can', 'estado_anterior': self.state, 'fecha_ult_estado': date.today()})
         return
 
-    # @api.depends('state')
+    """ # @api.depends('state')
     def _onchange_state(self) :
-        self.estado_anterior = self.state
+        self.estado_anterior = self.state """
 
-    @api.one
-    @api.constrains('monto_sol', 'monto_aut', 'monto_ren', 'monto_pag')
-    def _validar_montos(self):
-        if self.monto_sol > self.monto_aut :
-            raise ValidationError('Monto solicitado hhhh es mayor al monto autorizado')
-        if self.monto_ren > self.monto_aut :
-            raise ValidationError('Monto rendido es mayor al monto autorizado')
-        if self.monto_pag > self.monto_aut :
-            raise ValidationError('Monto pagado es mayor al monto autorizado')
+    # Valida los montos al guardar.
+    # No es necesario si se aplica el metodo _onchange_monto()
+    # @api.one
+    # @api.constrains('monto_sol', 'monto_aut', 'monto_ren', 'monto_pag')
+    # def _validar_montos(self):
+    #     if self.monto_sol > self.monto_aut :
+    #         raise ValidationError('Monto solicitado es mayor al monto autorizado')
+    #     if self.monto_ren > self.monto_aut :
+    #         raise ValidationError('Monto rendido es mayor al monto autorizado')
+    #     if self.monto_pag > self.monto_aut :
+    #         raise ValidationError('Monto pagado es mayor al monto autorizado')
 
+    # Chequea montos cuando se editan
     @api.onchange('monto_sol', 'monto_aut', 'monto_ren', 'monto_pag')
     def _onchange_monto(self):
-        if self.monto_sol > self.monto_aut :
-            raise Warning(_('Monto solicitado es mayor al monto autorizado'))
-        if self.monto_ren > self.monto_aut :
-            raise Warning(_('Monto rendido es mayor al monto autorizado'))
-        if self.monto_pag > self.monto_aut :
-            raise Warning(_('Monto pagado es mayor al monto autorizado'))
+        if (self.state != 'nue') :
+            if self.monto_sol > self.monto_aut :
+                raise Warning(_('Monto solicitado es mayor al monto autorizado'))
+            if self.monto_ren > self.monto_aut :
+                raise Warning(_('Monto rendido es mayor al monto autorizado'))
+            if self.monto_pag > self.monto_aut :
+                raise Warning(_('Monto pagado es mayor al monto autorizado'))
 
     def _notificar_cambio_estado(self) :
         template_id = self.env.ref("docentes.solicitud_nuevo_estado_email_template").id
         template = self.env['mail.template'].browse(template_id)
         template.send_mail(self.id, force_send=True)
-        
 
     @api.onchange('tipo_solicitud')
     def _onchange_tipo_solicitud(self):
@@ -216,22 +233,26 @@ class DocentesSolicitudes(models.Model):
             groups = groups.split(',')
             
             # Por defecto 
-            self.mostrar_bolsones =  False
-            self.mostrar_subsidios = False
+            _mostrar_bolsones = False
+            _mostrar_subsidios = False
             res = {'domain' : {'docente' : [('active', '=', True)],}}
 
             if ("bolsones" in groups) :
-                self.mostrar_bolsones = True
-                res['domain']['docente'].append(('esdocente', '=', True))
+                _mostrar_bolsones = True
+                res['domain']['docente'].append(('esdocente', '=', True),)
 
             if ("subsidios" in groups) :
-                self.mostrar_subsidios = True
+                _mostrar_subsidios = True
+
+            self.mostrar_bolsones = _mostrar_bolsones
+            self.mostrar_subsidios = _mostrar_subsidios
 
             return res
 
 class DocentesBolsones(models.Model):
     """
     Gestión de bolsones escolares y por nacimiento para hijos de afiliades
+
     """
     _name = 'docentes.bolsones'
     _order = 'nivel'
@@ -245,15 +266,22 @@ class DocentesBolsones(models.Model):
 
     entregado = fields.Boolean('Entregado')
 
-class TipoSolicitud(models.Model):
-    _name = 'docentes.tipo_solicitud'
-    _description = 'Modelo para los tipos de solicitud'
+class OptionSelection(models.AbstractModel):
+    _name = 'docentes.optionselection'
+    _description = 'Modelo genérico para los opciones de los selectores'
 
     name = fields.Char('Nombre', required=True)
     activo = fields.Boolean('Activo', required=True, default=True)
-    grupos = fields.Char('Grupos', help="Escriba en minusculas y separado por comas el nombre de los grupos al que pertenece la solicitud. Evite los espacios")
 
-    _sql_constraints = [('UN_TipoSolicitud_name', 'UNIQUE (name)', 'Ya existe un tipo de solicitud con ese nombre')]
+    _sql_constraints = [('UN_OptSelection_name', 'UNIQUE (name)',
+                         'Ya existe una opción con ese nombre')]
+
+class TipoSolicitud(models.Model):
+    _name = 'docentes.tipo_solicitud'
+    _inherit = 'docentes.optionselection'
+    _description = 'Modelo para los tipos de solicitud'
+
+    grupos = fields.Char('Grupos', help="Escriba en minusculas y separado por comas el nombre de los grupos al que pertenece la solicitud. Evite los espacios")
 
     @api.multi
     def write(self, vals):
@@ -264,3 +292,23 @@ class TipoSolicitud(models.Model):
 
         tipo = super(TipoSolicitud, self).write(vals)
         return tipo
+
+class CodigoAporte(models.Model):
+    _name = 'docentes.codigo_aporte'
+    _inherit = 'docentes.optionselection'
+
+class CategoriaAporte(models.Model):
+    _name = 'docentes.categoria_aporte'
+    _inherit = 'docentes.optionselection'
+
+class CaracterAporte(models.Model):
+    _name = 'docentes.caracter_aporte'
+    _inherit = 'docentes.optionselection'
+
+class DependenciaAporte(models.Model):
+    _name = 'docentes.dependencia_aporte'
+    _inherit = 'docentes.optionselection'
+
+class SubdependenciaAporte(models.Model):
+    _name = 'docentes.subdependencia_aporte'
+    _inherit = 'docentes.optionselection'

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
-  <data noupdate="1">
+  <data>
     <record id="solicitud_nuevo_estado_email_template" model="mail.template">
       <field name="name">Cambio de estado en solicitud</field>
       <field name="model_id" ref="docentes.model_docentes_solicitudes" />
@@ -10,10 +10,32 @@
       <field name="body_html" type="html">
 
         <p>
-          Querido ${object.docente.name},
+          Estimado ${object.docente.name},
           <br />
           <br />
-          Le informamos que su solicitud paso a estado: ${object.state}
+          Le informamos que el día de la fecha ${object.fecha_ult_estado}, su solicitud cambió de estado 
+          % if object.estado_anterior=='sol' :
+            <span>solicitado</span>
+          % endif
+          % if object.estado_anterior=='aut' :
+            <span>autorizado</span>
+          % endif
+          % if object.estado_anterior=='fin' :
+            <span>finalizado</span>
+          % endif
+          a
+          % if object.state=='can' :
+            <span>cancelado</span>
+          % endif
+          % if object.state=='aut' :
+            <span>autorizado</span>
+          % endif
+          % if object.state=='fin' :
+            <span>finalizado</span>
+          % endif
+          % if object.state=='rec' :
+            <span>rechazado</span>
+          % endif
           <br />
         </p>
         <p>
