@@ -44,6 +44,7 @@
             </tree>
         </field>
     </record>
+    
     <record model="ir.ui.view" id="gestion_de_cambios_form_view">
         <field name="name">gestion_de_cambios_docentes_aportes.form</field>
         <field name="model">docentes.gestion_de_cambios</field>
@@ -58,12 +59,13 @@
             </form>
         </field>
     </record>
-    <record model="ir.actions.act_window" id="action_gestion_de_cambios">
+
+    <!-- <record model="ir.actions.act_window" id="action_gestion_de_cambios">
         <field name="name">Gestión de cambios</field>
         <field name="res_model">docentes.gestion_de_cambios</field>
         <field name="domain">[]</field>
         <field name="search_view_id" ref="gestion_de_cambios_tree_view"/>
     </record>
-    <menuitem name="Gestion de cambios" id="gestion_de_cambios" parent="base.menu_docentes_aportes" groups="base.group_aportes_gestion_de_cambios" sequence="4" action="action_gestion_de_cambios"/>
+    <menuitem name="Gestion de cambios" id="gestion_de_cambios" parent="base.menu_docentes_aportes" groups="base.group_aportes_gestion_de_cambios" sequence="4" action="action_gestion_de_cambios"/> -->
 </odoo>
 

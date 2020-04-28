@@ -24,4 +24,6 @@ from . import docentes
 from . import aportes
 from . import gestion_de_cambios
 from . import solicitudes
+from . import _docente
+from . import cargo
 

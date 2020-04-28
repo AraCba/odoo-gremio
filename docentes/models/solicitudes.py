@@ -78,7 +78,7 @@ class DocentesSolicitudes(models.Model):
     _name = 'docentes.solicitudes'
     _order = 'fecha_sol desc, fecha_ult_estado desc, docente'
     _description = 'Modelo Solicitudes de servicios a afiliados'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     docente = fields.Many2one('res.partner',
                               string='Docente',
@@ -91,9 +91,11 @@ class DocentesSolicitudes(models.Model):
     fecha_sol = fields.Date('Fecha de solicitud', required=True, default=date.today(), readonly=True)
     fecha_ult_estado = fields.Date('Fecha de último estado', required=True, default=date.today(), readonly=True)
     doc_completa = fields.Boolean('Documentación completa')
-    expediente = fields.Integer('Expediente')
-    resolucion = fields.Integer('Resolución')
+    # expediente = fields.Integer('Expediente')
+    # resolucion = fields.Integer('Resolución')
     observaciones = fields.Char('Observaciones')
+    expediente_resolucion = fields.Char('Expediente/resolución')
+    notas = fields.Text('Notas')
 
     # Este campo queda obsoleto
     tipo = fields.Selection(TIPO_SOL, 'Tipo de solicitud')
@@ -131,51 +133,34 @@ class DocentesSolicitudes(models.Model):
     mostrar_subsidios = fields.Boolean(string='ocultar_bolsones', 
                         compute="_onchange_tipo_solicitud", 
                         store = False)
-
-    # Este campo se agrega para ser usado en el envío de mail
-    # No se almacena
-    # estado_anterior = fields.Char(string='estado_anterior')
-
-    # log_messages = message_ids = fields.One2many(compute='_log_messages')
-    # def _log_messages(self) :
-    #     return self.env['mail.message'].search([
-    #         ('model', '=', self._name),
-    #         ('message_type', '=', 'notification'),
-    #         ('res_id', '=', self.id)
-    #     ])
-
-    def _logAction(self, json):
-        logger = SmileDBLogger(self._cr.dbname, 'docentes.solicitudes', self.id, self._uid)
-        json.update({'user_id':self.env.uid}) 
-        logger.info(_(json))
-        return
+    mostrar_prestamos = fields.Boolean(string='ocultar_prestamos', 
+                        compute="_onchange_tipo_solicitud", 
+                        store = False)
+    mostrar_notas = fields.Boolean(string='ocultar_notas', 
+                        compute="_onchange_tipo_solicitud", 
+                        store = False)
 
     @api.model
     def create(self, vals):
         vals['state'] = 'sol'
         solicitud = super(DocentesSolicitudes, self).create(vals)
-        # solicitud.state = 'sol'
         return solicitud
 
     @api.multi
     def write(self, vals):
-        if ('state' in vals.keys()) :
-            # Esta linea hace que se vuelva a invocar al metodo write, pero es necesaria
-            # para hacer efectiva la carga del campo estado_anterior que no es almacenable
-            # De todos modos no almacena el valor en la base 
-            vals.update({'estado_anterior': self.state})
-
         solicitud = super(DocentesSolicitudes, self).write(vals)
-
-        if ('state' in vals.keys()) :
-            logjson = {'oldstate':{'state':self.estado_anterior}, 'newstate':{'state':self.state}}
-            self._logAction(logjson)
-            self._notificar_cambio_estado()
-
         return solicitud
 
     def autorizar(self):
         for record in self:
+            groups = (self.tipo_solicitud.grupos+ '.')[:-1] #Creo una copia del valor
+            groups = groups.split(',')
+            if 'subsidios' in groups :
+                if record.monto_aut <= 0 :
+                    raise ValidationError('Monto autorizado debe ser mayor a 0')
+            if 'bolsones' in groups :
+                if len(record.bolsones) < 1 :
+                    raise ValidationError('Debe existir al menos un bolsón')
             record.write({'state': 'aut', 'estado_anterior': self.state, 'fecha_ult_estado': date.today()})
         return
     
@@ -186,6 +171,13 @@ class DocentesSolicitudes(models.Model):
 
     def finalizar(self):
         for record in self:
+            groups = (self.tipo_solicitud.grupos+ '.')[:-1] #Creo una copia del valor
+            groups = groups.split(',')
+            if 'subsidios' in groups :
+                if record.monto_pag <= 0 or record.monto_pag > record.monto_aut :
+                    raise ValidationError('Monto pagado debe ser mayor a 0 y menor o igual al monto autorizado')
+            if not record.doc_completa : 
+                raise ValidationError('Para finalizar la solicitud se debe tener la documentación completa')
             record.write({'state': 'fin', 'estado_anterior': self.state, 'fecha_ult_estado': date.today()})
         return
 
@@ -194,38 +186,6 @@ class DocentesSolicitudes(models.Model):
             record.write({'state': 'can', 'estado_anterior': self.state, 'fecha_ult_estado': date.today()})
         return
 
-    """ # @api.depends('state')
-    def _onchange_state(self) :
-        self.estado_anterior = self.state """
-
-    # Valida los montos al guardar.
-    # No es necesario si se aplica el metodo _onchange_monto()
-    # @api.one
-    # @api.constrains('monto_sol', 'monto_aut', 'monto_ren', 'monto_pag')
-    # def _validar_montos(self):
-    #     if self.monto_sol > self.monto_aut :
-    #         raise ValidationError('Monto solicitado es mayor al monto autorizado')
-    #     if self.monto_ren > self.monto_aut :
-    #         raise ValidationError('Monto rendido es mayor al monto autorizado')
-    #     if self.monto_pag > self.monto_aut :
-    #         raise ValidationError('Monto pagado es mayor al monto autorizado')
-
-    # Chequea montos cuando se editan
-    @api.onchange('monto_sol', 'monto_aut', 'monto_ren', 'monto_pag')
-    def _onchange_monto(self):
-        if (self.state != 'nue') :
-            if self.monto_sol > self.monto_aut :
-                raise Warning(_('Monto solicitado es mayor al monto autorizado'))
-            if self.monto_ren > self.monto_aut :
-                raise Warning(_('Monto rendido es mayor al monto autorizado'))
-            if self.monto_pag > self.monto_aut :
-                raise Warning(_('Monto pagado es mayor al monto autorizado'))
-
-    def _notificar_cambio_estado(self) :
-        template_id = self.env.ref("docentes.solicitud_nuevo_estado_email_template").id
-        template = self.env['mail.template'].browse(template_id)
-        template.send_mail(self.id, force_send=True)
-
     @api.onchange('tipo_solicitud')
     def _onchange_tipo_solicitud(self):
         if (self.tipo_solicitud.grupos) :
@@ -233,38 +193,78 @@ class DocentesSolicitudes(models.Model):
             groups = groups.split(',')
             
             # Por defecto 
-            _mostrar_bolsones = False
-            _mostrar_subsidios = False
             res = {'domain' : {'docente' : [('active', '=', True)],}}
 
-            if ("bolsones" in groups) :
-                _mostrar_bolsones = True
+            if self.tipo_solicitud.aplica_docente : 
                 res['domain']['docente'].append(('esdocente', '=', True),)
 
-            if ("subsidios" in groups) :
-                _mostrar_subsidios = True
-
-            self.mostrar_bolsones = _mostrar_bolsones
-            self.mostrar_subsidios = _mostrar_subsidios
+            # Cuando un campo es computed no se debe usar la expresión write sobre él.
+            # Se debe hacer campo = <algo>
+            # Lo siguiente no funciona
+            # self.write({
+            #     'mostrar_bolsones': _mostrar_bolsones, 
+            #     'mostrar_subsidios': _mostrar_subsidios,
+            #     'mostrar_prestamos': _mostrar_prestamos,
+            #     'mostrar_notas': _mostrar_notas
+            # })
+            self.mostrar_bolsones = True if 'bolsones' in groups else False
+            self.mostrar_subsidios = True if 'subsidios' in groups else False
+            self.mostrar_prestamos = True if 'prestamos' in groups else False
+            self.mostrar_notas = True if 'notas' in groups else False
 
             return res
+
+    @api.multi
+    def message_get_suggested_recipients(self):
+        recipients = super(DocentesSolicitudes, self).message_get_suggested_recipients()
+        recipients[self.id].append((self.docente.id, self.docente.name, 'Solicitante'))
+        return recipients
+
 
 class DocentesBolsones(models.Model):
     """
     Gestión de bolsones escolares y por nacimiento para hijos de afiliades
-
     """
+
     _name = 'docentes.bolsones'
     _order = 'nivel'
     _description = 'Modelo para la entrega de bolsones a afiliados'
+
     solicitud = fields.Many2one(
         'docentes.solicitudes', string='Solicitud', ondelete='cascade')
 
-    menor = fields.Many2one('docentes.hijos', string='Menor')
+    menor = fields.Many2one('docentes.hijos', 
+        string='Menor', 
+        domain="[('verificado','=', True)]")
 
     nivel = fields.Selection(TIPO_BOLSON, 'Bolsón', required=True)
 
     entregado = fields.Boolean('Entregado')
+
+    solicitante = fields.Char(string='Solicitante', compute='_get_solicitante', store=False)
+
+    @api.depends('solicitud')
+    def _get_solicitante(self) :
+        for record in self:
+            record.solicitante = record.solicitud.docente.name
+        return
+
+    @api.model
+    def create(self, vals):
+        bolson = super(DocentesBolsones, self).create(vals)
+        return bolson
+
+    @api.onchange('solicitud')
+    def _onchange_solicitud(self):
+        res = {'domain' : {'menor' : [('verificado', '=', True)],}}
+
+        hijos = self.solicitud.docente.hijo_id
+        hijos_ids = []
+        for hijo in hijos :
+            hijos_ids.append(hijo.id)
+        res['domain']['menor'].append(('id', 'in', hijos_ids),)
+
+        return res
 
 class OptionSelection(models.AbstractModel):
     _name = 'docentes.optionselection'
@@ -282,6 +282,7 @@ class TipoSolicitud(models.Model):
     _description = 'Modelo para los tipos de solicitud'
 
     grupos = fields.Char('Grupos', help="Escriba en minusculas y separado por comas el nombre de los grupos al que pertenece la solicitud. Evite los espacios")
+    aplica_docente = fields.Boolean('Aplica a docente')
 
     @api.multi
     def write(self, vals):
@@ -293,22 +294,22 @@ class TipoSolicitud(models.Model):
         tipo = super(TipoSolicitud, self).write(vals)
         return tipo
 
-class CodigoAporte(models.Model):
-    _name = 'docentes.codigo_aporte'
-    _inherit = 'docentes.optionselection'
+# class CodigoAporte(models.Model):
+#     _name = 'docentes.codigo_aporte'
+#     _inherit = 'docentes.optionselection'
 
-class CategoriaAporte(models.Model):
-    _name = 'docentes.categoria_aporte'
-    _inherit = 'docentes.optionselection'
+# class CategoriaAporte(models.Model):
+#     _name = 'docentes.categoria_aporte'
+#     _inherit = 'docentes.optionselection'
 
-class CaracterAporte(models.Model):
-    _name = 'docentes.caracter_aporte'
-    _inherit = 'docentes.optionselection'
+# class CaracterAporte(models.Model):
+#     _name = 'docentes.caracter_aporte'
+#     _inherit = 'docentes.optionselection'
 
-class DependenciaAporte(models.Model):
-    _name = 'docentes.dependencia_aporte'
-    _inherit = 'docentes.optionselection'
+# class DependenciaAporte(models.Model):
+#     _name = 'docentes.dependencia_aporte'
+#     _inherit = 'docentes.optionselection'
 
-class SubdependenciaAporte(models.Model):
-    _name = 'docentes.subdependencia_aporte'
-    _inherit = 'docentes.optionselection'
+# class SubdependenciaAporte(models.Model):
+#     _name = 'docentes.subdependencia_aporte'
+#     _inherit = 'docentes.optionselection'

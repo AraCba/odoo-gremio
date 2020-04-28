@@ -98,6 +98,10 @@ class Partner(models.Model):
     hijo_id = fields.Many2many('docentes.hijos', column1='partner_id',
                                     column2='hijo_id', string='Menores a cargo')
 
+    etiq_docente = fields.Many2many(
+        'docentes.etiqueta', 'docente_etiqueta_rel', 'partner_id', 'etiqueta_id',
+        string='Etiquetas docentes')
+
 
     def _solicitarCambio(self, **args):
       # El método self.write actualiza el campo en la interfaz
@@ -218,7 +222,6 @@ class DocentesHijos(models.Model):
 
     padres = fields.Many2many('res.partner', column1='hijo_id', column2='partner_id', string='Padres')
 
-
     name = fields.Char('Nombre', size=30, required=True)
     dni = fields.Integer('N documento', required=True)
     fecha_nac = fields.Date('Fecha de nacimiento')
@@ -231,4 +234,7 @@ class DocentesHijos(models.Model):
     #para bolsones
 #    bolsones = fields.Many2one('docentes.bolsones', string='Docente', ondelete='cascade')
 
+class EtiquetaDocente(models.Model) :
+  _name = 'docentes.etiqueta'
 
+  name = fields.Char(string="Nombre")

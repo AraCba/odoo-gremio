@@ -2,7 +2,7 @@
 <odoo>
 
 
-    <record model="ir.actions.act_window" id="action_docentes_altas">
+    <!-- <record model="ir.actions.act_window" id="action_docentes_altas">
         <field name="name">Altas Docentes</field>
         <field name="res_model">res.partner</field>
         <field name="search_view_id" ref="view_res_partner_docentes_filter"/>
@@ -22,8 +22,13 @@
     </record>
 
 
-    <menuitem name="Altas nuevas" id="docentes_altas_pendientes" parent="base.menu_docentes_main" sequence="10" action="action_docentes_altas" groups="base.group_docentes_administracion_de_afiliados"/>
+    <menuitem name="Altas nuevas" id="docentes_altas_pendientes" parent="base.menu_docentes_main" sequence="10" action="action_docentes_altas" groups="base.group_docentes_administracion_de_afiliados"/> -->
 
+
+
+
+
+    
 <!--
 
     <record model="ir.ui.view" id="view_partner_form">

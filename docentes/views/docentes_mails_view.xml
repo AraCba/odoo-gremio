@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
    <record id="view_res_partner_docentes_mails_filter" model="ir.ui.view">
         <field name="name">res.partner.select.inherit</field>
         <field name="model">res.partner</field>
@@ -26,6 +27,7 @@
             </search>
         </field>
     </record>
+
     <record model="ir.ui.view" id="view_docentes_mails_tree">
         <field name="name">Docentes Mails</field>
         <field name="model">res.partner</field>
@@ -41,18 +43,21 @@
             </tree>
         </field>
     </record>
-    <record model="ir.actions.act_window" id="action_docentes_mails">
+
+    <!-- <record model="ir.actions.act_window" id="action_docentes_mails">
         <field name="name">Docentes Mails</field>
         <field name="res_model">res.partner</field>
         <field name="search_view_id" ref="view_res_partner_docentes_mails_filter"/>
         <field name="domain">[('esdocente','=',True)]</field>
     </record>
+
    <record model="ir.actions.act_window.view" id="action_docentes_mails_view_tree">
         <field name="sequence" eval="1"/>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_docentes_mails_tree"/>
         <field name="act_window_id" ref="action_docentes_mails"/>
     </record>
-    <menuitem name="Listado de mails" id="menu_docentes_mails" sequence="2" parent="base.menu_docentes_main" groups="base.group_mails_listado" action="action_docentes_mails"/>
+
+    <menuitem name="Listado de mails" id="menu_docentes_mails" sequence="2" parent="base.menu_docentes_main" groups="base.group_mails_listado" action="action_docentes_mails"/> -->
 </odoo>
 

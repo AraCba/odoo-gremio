@@ -1,4 +1,20 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-docentes_usuario,Docentes/Usuarios,model_model_docente,docentes.base.group_docentes_usuarios,1,0,0,0
-docente_modificacion_contacto,Modificacion de contacto,model_model_docente,docentes.base.group_docentes_modificacion_de_contactos,1,1,0,0
-
+docentes_partner_crud,Acceso completo a docentes,model_res_partner,docentes.group_usuarios_gremio,1,1,1,1
+docentes_hijos_crud,Acceso completo a hijos,model_docentes_hijos,docentes.group_usuarios_gremio,1,1,1,1
+docentes_etiqueta_docentes_crud,Acceso completo a etiqueta de docentes,model_docentes_etiqueta,docentes.group_administradores_gremio,1,1,1,1
+docentes_etiqueta_docentes_r,Acceso lectura a etiqueta de docentes,model_docentes_etiqueta,docentes.group_usuarios_gremio,1,0,0,0
+docentes_cargos_crud,Acceso completo a cargos docentes,model_docentes_cargo,docentes.group_usuarios_gremio,1,1,1,1
+docentes_tipo_cargos_crud,Acceso completo a tipo de cargos,model_docentes_tipo_cargo,docentes.group_administradores_gremio,1,1,1,1
+docentes_tipo_cargos_r,Acceso lectura a tipo de cargos,model_docentes_tipo_cargo,docentes.group_usuarios_gremio,1,0,0,0
+docentes_caracter_cargo_crud,Acceso completo a caracter de cargos,model_docentes_caracter_cargo,docentes.group_administradores_gremio,1,1,1,1
+docentes_caracter_cargo_r,Acceso lectura a caracter de cargos,model_docentes_caracter_cargo,docentes.group_usuarios_gremio,1,0,0,0
+docentes_dependencia_cargo_crud,Acceso completo a dependencia de cargos,model_docentes_dependencia_cargo,docentes.group_administradores_gremio,1,1,1,1
+docentes_dependencia_cargo_r,Acceso lectura a dependencia de cargos,model_docentes_dependencia_cargo,docentes.group_usuarios_gremio,1,0,0,0
+docentes_etiqueta_cargo_crud,Acceso completo a etiqueta de cargos,model_docentes_etiqueta_cargo,docentes.group_usuarios_gremio,1,1,1,1
+docentes_solicitudes_crud,Acceso completo a solicitudes,model_docentes_solicitudes,docentes.group_usuarios_gremio,1,1,1,1
+docentes_bolsones_crud,Acceso completo a bolsones,model_docentes_bolsones,docentes.group_usuarios_gremio,1,1,1,1
+docentes_tipo_solicitud_crud,Acceso completo a tipo de solicitud,model_docentes_tipo_solicitud,docentes.group_administradores_gremio,1,1,1,1
+docentes_tipo_solicitud_r,Acceso lectura a tipo de solicitud,model_docentes_tipo_solicitud,docentes.group_usuarios_gremio,1,0,0,0
+docentes_aportes_crud,Acceso completo a aportes,model_docentes_aportes,docentes.group_usuarios_gremio,1,1,1,1
+docentes_gestion_cambios_crud,Acceso completo a gestion de cambios,model_docentes_gestion_de_cambios,docentes.group_usuarios_gremio,1,1,1,1
+docentes_gestion_wizard_crud,Acceso al wizar de gestion de cambios,model_docentes_gestion_wizard,docentes.group_usuarios_gremio,1,1,1,1

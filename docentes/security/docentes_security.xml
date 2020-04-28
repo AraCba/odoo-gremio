@@ -45,6 +45,16 @@
 
         </record>
 
+        <record id="group_administradores_gremio" model="res.groups">
+            <field name="name">Administracion del modulo gremial</field>
+            <field name="comment">Grupo de usuario administradores del modulo gremial</field>
+        </record>
+
+        <record id="group_usuarios_gremio" model="res.groups">
+            <field name="name">Usuarios del modulo gremial</field>
+            <field name="comment">Grupo de usuario del modulo gremial</field>
+        </record>
+
     </data>
 </odoo>
 

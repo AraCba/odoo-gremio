@@ -60,7 +60,6 @@ class DocentesGestionDeCambioWiz(models.TransientModel):
                            required=True, 
                            readonly=True)
 
-
     descripcion = fields.Char('Descripción', 
                            help="Describir la consulta que permita identificar el período y si es de aportantes y/o no aportantes",
                            required=True)
@@ -73,56 +72,25 @@ class DocentesGestionDeCambioWiz(models.TransientModel):
                            help="Incluir aquellos que no aportaron y deberían haber aportado",
                            required=True)
 
-
-
-
     @api.multi
     @api.depends('fecha_desde', 'fecha_hasta')
     def set_situacion(self):
-        aportes = self.env['docentes.aportes'].search([('fecha', '>=', self.fecha_desde), ('fecha', '<=', self.fecha_hasta)])
-        if not aportes:
-            raise UserError("No hay aportes entre esas fechas")
+        if self.fecha_desde >= self.fecha_hasta :
+            raise UserError("El campo Fecha desde debe ser menor que el campo Fecha hasta")
 
-        docentes_situacion = []
+        result = False
 
-        if self.no_aportaron:
-            docentes = self.env['res.partner'].search([('esdocente', '=', True), ('estado', 'in', [ACTIVO,PEND_A,PEND_B,JUBA,BECARIEA,CONTRATADEA]) ])
-
-            for docente in docentes:
-                aporte_docente = aportes.search([('docente.id', '=', docente.id)])
-                if not aporte_docente:
-                    situacion = DOCENTE_NO_APORTO.get(docente.estado, 'OTRA')
-                    docente_gestion = {
-                        'docente': docente.id,
-                        'situacion': situacion,
-                        'fecha_desde': self.fecha_desde,
-                        'fecha_hasta': self.fecha_hasta,
-                        'fecha_consulta': fields.Datetime.now(),
-                        'descripcion': self.descripcion,
-                    }
-                    self.env['docentes.gestion_de_cambios'].create(docente_gestion)
-                    docentes_situacion.append(docente_gestion)
+        if self.no_aportaron :
+            self.env.cr.execute("select calcularInconsistencias(%s, %s, %s, %s)", ('no_aporto', self.fecha_desde, self.fecha_hasta, self.descripcion))
+            result = True if len(self.env.cr.fetchall()) >= 1 else result
+            # self.env['docentes.gestion_de_cambios'].invalidate_cache()
 
         if self.aportaron:
-            docentes = self.env['res.partner'].search([('esdocente', '=', True), ('estado', 'in', [NONE, BAJA, HIST, PASIVO, PEND_B, PEND_A,JUB,BECARIE, CONTRATADE]) ])
+            self.env.cr.execute("select calcularInconsistencias(%s, %s, %s, %s)", ('aporto', self.fecha_desde, self.fecha_hasta, self.descripcion))
+            result = True if len(self.env.cr.fetchall()) >= 1 else result
+            # self.env['docentes.gestion_de_cambios'].invalidate_cache()
 
-            for docente in docentes:
-                aporte_docente = aportes.search([('docente.id', '=', docente.id)])
-                if aporte_docente:
-                    situacion = DOCENTE_APORTO.get(docente.estado, 'OTRA')
-                    docente_gestion = {
-                        'docente': docente.id,
-                        'situacion': situacion,
-                        'fecha_desde': self.fecha_desde,
-                        'fecha_hasta': self.fecha_hasta,
-                        'fecha_consulta': fields.Datetime.now(),
-                        'descripcion': self.descripcion,
-                    }
-                    self.env['docentes.gestion_de_cambios'].create(docente_gestion)
-                    docentes_situacion.append(docente_gestion)
-
-
-        if not docentes_situacion:
+        if not result :
             raise UserError("No hay docentes con posibles cambios entre esas fechas")
 
         return {

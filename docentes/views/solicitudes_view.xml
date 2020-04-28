@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <menuitem name="Accion social" id="base.menu_docentes_accion_social" sequence="2" parent="base.menu_docentes"/>
+    <!-- <menuitem name="Accion social" id="base.menu_docentes_accion_social" sequence="2" parent="base.menu_docentes"/> -->
 
     <!--record id="view_res_partner_docentes_filter" model="ir.ui.view">
         <field name="name">Solicitudes Search</field>
@@ -45,18 +45,24 @@
                 </header>
 
                 <sheet>
-                    <group>
-                        <field name="mostrar_bolsones" invisible="1" />
-                        <field name="mostrar_subsidios" invisible="1" />
-                        <field name="tipo_solicitud" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}" domain="[('activo','=',True)]"/>
-                        <field name="docente" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>                                 
-                        <field name="fecha_sol" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
-                        <field name="fecha_ult_estado" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
-                        <field name="doc_completa" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
-                        <field name="expediente" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
-                        <field name="resolucion" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
-                        <field name="observaciones" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
-                        <field name="responsable" attrs="{'readonly': [('state', 'in', ['can','rec'])]}"/>
+                    <group col="2">
+                        <group>
+                            <field name="mostrar_bolsones" invisible="1" />
+                            <field name="mostrar_subsidios" invisible="1" />
+                            <field name="mostrar_prestamos" invisible="1" />
+                            <field name="mostrar_notas" invisible="1" />
+                            <field name="tipo_solicitud" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}" domain="[('activo','=',True)]"/>
+                            <field name="docente" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>                                 
+                            <field name="doc_completa" attrs="{'readonly': [('state', 'not in', ['nue','sol','aut'])]}"/>
+                            <field name="expediente_resolucion" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                            <!-- <field name="resolucion" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/> -->
+                            <field name="observaciones" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
+                            <field name="responsable" attrs="{'readonly': [('state', 'in', ['can','rec'])]}"/>
+                        </group>
+                        <group>
+                            <field name="fecha_sol" attrs="{'readonly': True}"/>
+                            <field name="fecha_ult_estado" attrs="{'readonly': True}"/>
+                        </group>
                     </group>
 
                     <!-- context="{'partner_id': docente.id }"-->
@@ -65,7 +71,8 @@
                             <field name="bolsones" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                 attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"> 
                                 <tree string="bolsones"  editable="bottom">
-                                    <field name="menor" domain="[('verificado','=',True)]" />
+                                    <field name="solicitud" invisible="1" />
+                                    <field name="menor"/>
                                     <field name="nivel"/>
                                     <field name="entregado"/>
                                 </tree>
@@ -74,11 +81,19 @@
 
                         <page string="Subsidios" attrs="{'invisible': [('mostrar_subsidios','=', False)]}">
                             <group>
-                                <field name="monto_sol" attrs="{'readonly': [('state', '!=', 'nue')]}"/>
+                                <field name="monto_sol" />
                                 <field name="monto_aut" attrs="{'readonly': [('state', '!=', 'sol')]}"/>
-                                <field name="monto_ren" attrs="{'readonly': [('state', '!=', 'aut')]}"/>
-                                <field name="monto_ren" attrs="{'readonly': [('state', '!=', 'aut')]}"/>
+                                <field name="monto_ren" />
+                                <field name="monto_pag" attrs="{'readonly': [('state', '!=', 'aut')]}"/>
                             </group>
+                        </page>
+
+                        <page string="Prestamos" attrs="{'invisible': [('mostrar_prestamos','=', False)]}">
+                            <p>Por el momento no hay campos definidos para Prestamos</p>
+                        </page>
+
+                        <page string="Notas" attrs="{'invisible': [('mostrar_notas','=', False)]}">
+                            <field name="notas" widget="html"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -86,20 +101,36 @@
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
                     <field name="activity_ids" widget="mail_activity"/>
-                    <field name="message_ids" widget="mail_thread" options='{"thread_level": 2}'/>
+                    <field name="message_ids" widget="mail_thread"/>
                 </div>
 
             </form>
         </field>
     </record>
 
-    <record model="ir.actions.act_window" id="action_solicitudes">
+    <!-- <record model="ir.actions.act_window" id="action_solicitudes">
         <field name="name">Solicitudes</field>
         <field name="res_model">docentes.solicitudes</field>
-        <!--field name="domain">[('estado','in',['sol', 'aut','rec'])]</field>
-        <field name="search_view_id" ref="solicitudes_view_filter"/-->
     </record>
 
-    <menuitem name="Solicitudes" id="menu_docentes_solicitudes" parent="base.menu_docentes_accion_social" groups="base.group_gestion_solicitudes" sequence="1" action="action_solicitudes" />
+    <menuitem name="Solicitudes" id="menu_docentes_solicitudes" parent="base.menu_docentes_accion_social" groups="base.group_gestion_solicitudes" sequence="1" action="action_solicitudes" /> -->
 
+    <!-- Envio masivo de mails -->
+    <!--  Replace the default mass-mailing wizard in base with the composition wizard -->
+    <act_window name="Envío masivo de correo"
+        res_model="mail.compose.message"
+        src_model="docentes.solicitudes"
+        view_mode="form"
+        multi="True"
+        target="new"
+        key2="client_action_multi"
+        id="action_solicitud_mail_masivo"
+        context="{
+            'default_composition_mode': 'mass_mail',
+            'default_partner_to': '${object.docente.id or \'\'}'
+        }"/>
+
+    <record id="email_template_solicitante" model="mail.template">
+        <field name="ref_ir_act_window" ref="action_solicitud_mail_masivo"/>
+    </record>
 </odoo>

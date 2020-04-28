@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- Menu superior -->
+  <menuitem name="Docentes" id="base.menu_docentes" sequence="5" />
+
+  <!-- Menu docentes -->
+  <menuitem name="Docentes" id="base.menu_docentes_main" 
+    sequence="1" parent="base.menu_docentes" />
+
+  <record model="ir.actions.act_window" id="action_docentes">
+    <field name="name">Listado de docentes</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">tree,pivot,form</field>
+  </record>
+
+  <menuitem name="Listado de docentes" id="base.menu_listado_docentes" 
+    sequence="10" parent="base.menu_docentes_main" 
+    action="action_docentes" 
+    groups="group_usuarios_gremio" />
+
+  <record model="ir.actions.act_window" id="action_docentes_mails">
+    <field name="name">Listado de mails</field>
+    <field name="res_model">res.partner</field>
+    <field name="search_view_id" ref="view_res_partner_docentes_mails_filter"/>
+    <field name="domain">[('esdocente','=',True)]</field>
+  </record>
+ 
+  <menuitem name="Listado de mails" id="menu_docentes_mails" 
+    sequence="20" parent="base.menu_docentes_main" 
+    groups="group_usuarios_gremio" 
+    action="action_docentes_mails"/>
+
+  <record model="ir.actions.act_window" id="action_docentes_altas">
+    <field name="name">Altas Docentes</field>
+    <field name="res_model">res.partner</field>
+    <field name="search_view_id" ref="view_res_partner_docentes_filter"/>
+    <field name="domain">[('estado','=','nuevo')]</field>
+  </record>
+
+  <menuitem name="Altas nuevas" id="docentes_altas_pendientes" 
+    parent="base.menu_docentes_main" sequence="30" 
+    action="action_docentes_altas" 
+    groups="group_usuarios_gremio"/>
+
+  <!-- Menu cargos -->
+  <menuitem name="Cargos docentes" id="base.menu_docentes_cargos" 
+    sequence="10" parent="base.menu_docentes"/>
+
+  <record model="ir.actions.act_window" id="action_cargos">
+    <field name="name">Cargos</field>
+    <field name="res_model">docentes.cargo</field>
+  </record>
+
+  <menuitem name="Cargos" id="menu_docentes_cargos" 
+    parent="base.menu_docentes_cargos" 
+    sequence="10" action="action_cargos" 
+    groups="group_usuarios_gremio"/>
+
+  <record model="ir.actions.act_window" id="action_tipo_cargos">
+    <field name="name">Tipo de cargos</field>
+    <field name="res_model">docentes.tipo.cargo</field>
+  </record>
+
+  <menuitem name="Tipo de cargos" id="menu_docentes_tipo_cargo" 
+    parent="base.menu_docentes_cargos" 
+    sequence="20" action="action_tipo_cargos" 
+    groups="group_administradores_gremio" />
+
+  <record model="ir.actions.act_window" id="action_caracter_cargos">
+    <field name="name">Caracter de cargo</field>
+    <field name="res_model">docentes.caracter.cargo</field>
+  </record>
+
+  <menuitem name="Caracter de cargo" id="menu_docentes_caracter_cargo" 
+    parent="base.menu_docentes_cargos" 
+    sequence="30" action="action_caracter_cargos" 
+    groups="group_administradores_gremio" />
+
+  <record model="ir.actions.act_window" id="action_dependencia_cargos">
+    <field name="name">Dependencia de cargo</field>
+    <field name="res_model">docentes.dependencia.cargo</field>
+  </record>
+
+  <menuitem name="Dependencia de cargo" id="menu_docentes_dependencia_cargo" 
+    parent="base.menu_docentes_cargos" 
+    sequence="40" action="action_dependencia_cargos" 
+    groups="group_administradores_gremio" />
+
+  <!-- Menu solicitudeṣ -->
+  <menuitem name="Accion social" id="base.menu_docentes_accion_social" 
+    sequence="20" parent="base.menu_docentes"/>
+
+  <record model="ir.actions.act_window" id="action_solicitudes">
+    <field name="name">Solicitudes</field>
+    <field name="res_model">docentes.solicitudes</field>
+  </record>
+
+  <menuitem name="Solicitudes" id="menu_docentes_solicitudes" 
+    parent="base.menu_docentes_accion_social" 
+    groups="group_usuarios_gremio"  
+    sequence="10" action="action_solicitudes" />
+
+  <record model="ir.actions.act_window" id="action_tipo_solicitudes">
+    <field name="name">Tipo de solicitudes</field>
+    <field name="res_model">docentes.tipo_solicitud</field>
+  </record>
+
+  <menuitem name="Tipo de solicitudes" id="menu_docentes_tipo_solicitudes" 
+    parent="base.menu_docentes_accion_social" 
+    groups="group_administradores_gremio" 
+    sequence="20" 
+    action="action_tipo_solicitudes" />
+
+  <record model="ir.actions.act_window" id="action_hijos">
+    <field name="name">Menores a cargo</field>
+    <field name="res_model">docentes.hijos</field>
+    <field name="domain">[]</field>
+    <field name="search_view_id" ref="hijos_form_view"/>
+  </record>
+
+  <menuitem name="Menores a cargo" id="menu_docentes_hijos" 
+    parent="base.menu_docentes_accion_social" 
+    groups="group_usuarios_gremio"  
+    sequence="30" action="action_hijos" />
+
+  <record model="ir.actions.act_window" id="action_bolsones">
+    <field name="name">Bolsones</field>
+    <field name="res_model">docentes.bolsones</field>
+    <field name="view_mode">tree,pivot</field>
+  </record>
+
+  <menuitem name="Bolsones" id="menu_docentes_bolsones" 
+    parent="base.menu_docentes_accion_social" 
+    groups="group_usuarios_gremio"  
+    sequence="40" action="action_bolsones" />
+
+  <!-- Menu aportes -->
+  <menuitem name="Aportes" id="base.menu_docentes_aportes" 
+    sequence="30" parent="base.menu_docentes"/>
+
+  <record model="ir.actions.act_window" id="action_aportes">
+    <field name="name">Aportes</field>
+    <field name="res_model">docentes.aportes</field>
+    <field name="domain">[]</field>
+    <field name="search_view_id" ref="aportes_form_view"/>
+  </record>
+
+  <menuitem name="Aportes" id="aportes" 
+    parent="base.menu_docentes_aportes" 
+    groups="group_usuarios_gremio" 
+    sequence="10" action="action_aportes" />
+
+  <record model="ir.actions.act_window" id="action_gestion_de_cambios">
+    <field name="name">Gestión de cambios</field>
+    <field name="res_model">docentes.gestion_de_cambios</field>
+    <field name="domain">[]</field>
+    <field name="search_view_id" ref="gestion_de_cambios_tree_view"/>
+  </record>
+
+  <menuitem name="Gestion de cambios" id="gestion_de_cambios" 
+    parent="base.menu_docentes_aportes" 
+    groups="group_usuarios_gremio" 
+    sequence="20" action="action_gestion_de_cambios"/>
+
+  <record id="action_gestion_de_cambios_wizard" model="ir.actions.act_window">
+    <field name="name">Consulta de incoherencias</field>
+    <field name="res_model">docentes.gestion.wizard</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_gestion_de_cambios_wizard"/>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem name="Generar consulta" id="gestion_de_cambios_wizard" 
+    sequence="30" groups="group_usuarios_gremio"  
+    parent="base.menu_docentes_aportes" 
+    action="action_gestion_de_cambios_wizard"/>
+
+</odoo>

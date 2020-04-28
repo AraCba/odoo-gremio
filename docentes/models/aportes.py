@@ -44,6 +44,9 @@ class DocentesAportes(models.Model):
     docente = fields.Many2one('res.partner',
         string='Docente',
         ondelete='cascade')
+    docente_bis = fields.Many2one('docentes.docente',
+        string='Docente',
+        ondelete='cascade')
     legajo = fields.Integer('Legajo', required=True)
     nombre = fields.Char('Nombre', size=30, required=True)
     cuil = fields.Char('Cuil')
@@ -51,11 +54,11 @@ class DocentesAportes(models.Model):
     codigo = fields.Selection(TIPO_APORTE,'Codigo', required=True)
     aporte = fields.Float('Aporte', required=True)
 
-    codigo_aporte = fields.Many2one('docentes.codigo_aporte', string='Codigo de aporte')
-    categoria_aporte = fields.Many2one('docentes.categoria_aporte', string='Categoria del aporte')
-    caracter_aporte = fields.Many2one('docentes.caracter_aporte', string='Caracter del aporte')
-    dependencia_aporte = fields.Many2one('docentes.dependencia_aporte', string='Dependencia del aporte')
-    subdependencia_aporte = fields.Many2one('docentes.subdependencia_aporte', string='Subdependencia del aporte')
+    # codigo_aporte = fields.Many2one('docentes.codigo_aporte', string='Codigo de aporte')
+    # categoria_aporte = fields.Many2one('docentes.categoria_aporte', string='Categoria del aporte')
+    # caracter_aporte = fields.Many2one('docentes.caracter_aporte', string='Caracter del aporte')
+    # dependencia_aporte = fields.Many2one('docentes.dependencia_aporte', string='Dependencia del aporte')
+    # subdependencia_aporte = fields.Many2one('docentes.subdependencia_aporte', string='Subdependencia del aporte')
 
     @api.model
     @api.depends('docente','legajo', 'nombre', 'fecha')

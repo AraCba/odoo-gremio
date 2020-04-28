@@ -36,6 +36,7 @@ Incorpora nueva información a la categoría Partner y menúes específicos para
     'depends': ['base','smile_log','mail','portal'],
     'data': [
         'security/docentes_security.xml',
+        'security/ir.model.access.csv',
         'views/docentes_view.xml',
         'views/docentes_mails_view.xml',
         'views/aportes_view.xml',
@@ -44,8 +45,11 @@ Incorpora nueva información a la categoría Partner y menúes específicos para
         'views/tipo_solicitud_view.xml',
         'views/gestion_de_cambios_view.xml',
         'views/docentes_altas_view.xml',
+        'views/bolsones_view.xml',
+        'views/cargos_view.xml',
         'data/email_template.xml',
         'wizard/gestion_de_cambios_wizard_view.xml',
+        'views/menu_view.xml', #Debe ir al final de todas las vistas
         
     ],
     'application': True,

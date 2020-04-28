@@ -14,6 +14,7 @@
             </tree>
         </field>
     </record>
+    
     <record model="ir.ui.view" id="hijos_form_view">
         <field name="name">Menores a cargo</field>
         <field name="model">docentes.hijos</field>
@@ -34,12 +35,12 @@
         </field>
     </record>
 
-    <record model="ir.actions.act_window" id="action_hijos">
+    <!-- <record model="ir.actions.act_window" id="action_hijos">
         <field name="name">Menores a cargo</field>
         <field name="res_model">docentes.hijos</field>
         <field name="domain">[]</field>
         <field name="search_view_id" ref="hijos_form_view"/>
     </record>
-    <menuitem name="Menores a cargo" id="menu_docentes_hijos" parent="base.menu_docentes_accion_social" groups="base.group_accion_social" sequence="10" action="action_hijos" />
+    <menuitem name="Menores a cargo" id="menu_docentes_hijos" parent="base.menu_docentes_accion_social" groups="base.group_accion_social" sequence="10" action="action_hijos" /> -->
 </odoo>
 
