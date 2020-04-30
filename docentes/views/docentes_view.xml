@@ -99,8 +99,8 @@
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
             <field name="is_company" position="after">
-                <field name="esdocente" groups="base.group_docentes_administracion_avanzada" on_change="onchange_type(esdocente)" class="oe_inline" />
-                <label for="esdocente" groups="base.group_docentes_administracion_avanzada" string="¿Es docente?" />
+                <field name="esdocente" on_change="onchange_type(esdocente)" class="oe_inline" />
+                <label for="esdocente" string="¿Es docente?" />
             </field>
             <field name="email" position="after">
                 <field name="email2" widget="email" />

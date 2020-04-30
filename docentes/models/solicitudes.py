@@ -23,7 +23,6 @@ from odoo import api, fields, models, _
 from odoo.exceptions import Warning, ValidationError
 #from odoo.addons.docentes.models.base import Base
 from datetime import date
-from odoo.addons.smile_log.tools import SmileDBLogger 
 
 ESTADO_SOL = [
     ('sol', 'Solicitada'),
