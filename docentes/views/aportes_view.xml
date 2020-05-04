@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- <menuitem name="Aportes" id="base.menu_docentes_aportes" sequence="11" parent="base.menu_docentes"/> -->
 
     <record model="ir.ui.view" id="aportes_tree_view">
         <field name="name">Aportes</field>
         <field name="model">docentes.aportes</field>
         <field name="arch" type="xml">
             <tree string="Aportes">
-                <field name="docente"/>
+                <field name="docente_bis"/>
                 <field name="legajo"/>
                 <field name="fecha"/>
-                <field name="codigo"/>
+                <field name="codigo_bis"/>
                 <field name="aporte"/>
             </tree>
         </field>
@@ -24,31 +23,48 @@
                 <sheet>
                     <group>
                         <field name="docente_bis"/>
-                        <!--field name="nombre"/>
-                        <field name="legajo"/-->
                         <field name="fecha"/>
-                        <field name="codigo"/>
+                        <field name="codigo_bis"/>
                         <field name="aporte"/>
-                        <!-- <field name="codigo_aporte" domain="[('activo', '=', 'True')]"/>
-                        <field name="categoria_aporte" domain="[('activo', '=', 'True')]"/>
-                        <field name="caracter_aporte" domain="[('activo', '=', 'True')]"/>
-                        <field name="dependencia_aporte" domain="[('activo', '=', 'True')]"/>
-                        <field name="subdependencia_aporte" domain="[('activo', '=', 'True')]"/> -->
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- <record model="ir.actions.act_window" id="action_aportes">
-        <field name="name">Aporte</field>
-        <field name="res_model">docentes.aportes</field>
-        <field name="domain">[]</field>
-        <field name="search_view_id" ref="aportes_form_view"/>
+    <!-- ======================  -->
+    <!--    CODIGO DE APORTE     -->
+    <!-- ======================  -->
+    <!-- Vista de formulario -->
+    <record model="ir.ui.view" id="codigo_aporte_form_view">
+        <field name="name">Código de aporte</field>
+        <field name="model">docentes.codigo.aporte</field>
+        <field name="arch" type="xml">
+            <form string="Código de aporte">
+                <sheet>
+                    <group>
+                        <field name="nombre" />
+                        <field name="codigo" />
+                        <field name="activo" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
     </record>
-    <menuitem name="Aportes" id="aportes" parent="base.menu_docentes_aportes" groups="base.group_aportes_crear" sequence="1" action="action_aportes" /> -->
 
-    
+    <!-- Vista de lista -->
+    <record model="ir.ui.view" id="codigo_aporte_tree_view">
+        <field name="name">Códigos de aporte</field>
+        <field name="model">docentes.codigo.aporte</field>
+        <field name="arch" type="xml">
+            <tree string="Codigos de aporte">
+                <field name="nombre" />
+                <field name="codigo" />
+                <field name="activo" />
+            </tree>
+        </field>
+    </record>
+
     
 </odoo>
 

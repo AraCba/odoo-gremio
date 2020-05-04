@@ -83,6 +83,7 @@ class DocentesSolicitudes(models.Model):
                               string='Docente',
                               ondelete='cascade', 
                               required=True)
+    docente_bis = fields.Many2one('docentes.docente', string='Docente_bis')
 
     # Este campo queda obsoleto
     estado = fields.Selection(ESTADO_SOL, 'Estado')

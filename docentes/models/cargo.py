@@ -3,6 +3,7 @@ from odoo import api, fields, models, _
 
 class TipoCargo(models.Model) : 
   _name = 'docentes.tipo.cargo'
+  _rec_name = 'codigo'
 
   horas = fields.Boolean(string="Es por horas", required=True)
   codigo = fields.Char(string="Código", required=True)
@@ -11,6 +12,7 @@ class TipoCargo(models.Model) :
 
 class CaracterCargo(models.Model) :
   _name = 'docentes.caracter.cargo'
+  _rec_name = 'codigo'
 
   codigo = fields.Char(string="Código", required=True)
   name = fields.Char(string="Descripción", required=True)
@@ -22,6 +24,7 @@ class EtiquetaCargo(models.Model) :
 
 class DependenciaCargo(models.Model) :
   _name = 'docentes.dependencia.cargo'
+  _rec_name = 'codigo'
 
   codigo = fields.Char(string="Código", required=True)
   name = fields.Char(string="Descripción", required=True)
@@ -38,3 +41,5 @@ class Cargo(models.Model) :
   etiqueta = fields.Many2many(
         'docentes.etiqueta.cargo', 'docente_etiqueta_cargo_rel', 'cargo_id', 'etiqueta_cargo_id',
         string='Etiquetas')
+  # docente = fields.Many2one('res.partner', string='Docente')
+  docente = fields.Many2one('docentes.docente', string='Docente', required=True)

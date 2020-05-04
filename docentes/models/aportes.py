@@ -52,13 +52,8 @@ class DocentesAportes(models.Model):
     cuil = fields.Char('Cuil')
     fecha = fields.Date('Fecha', required=True)
     codigo = fields.Selection(TIPO_APORTE,'Codigo', required=True)
+    codigo_bis = fields.Many2one('docentes.codigo.aporte', string='Código')
     aporte = fields.Float('Aporte', required=True)
-
-    # codigo_aporte = fields.Many2one('docentes.codigo_aporte', string='Codigo de aporte')
-    # categoria_aporte = fields.Many2one('docentes.categoria_aporte', string='Categoria del aporte')
-    # caracter_aporte = fields.Many2one('docentes.caracter_aporte', string='Caracter del aporte')
-    # dependencia_aporte = fields.Many2one('docentes.dependencia_aporte', string='Dependencia del aporte')
-    # subdependencia_aporte = fields.Many2one('docentes.subdependencia_aporte', string='Subdependencia del aporte')
 
     @api.model
     @api.depends('docente','legajo', 'nombre', 'fecha')
@@ -110,3 +105,10 @@ class DocentesAportes(models.Model):
 
         return super(DocentesAportes, self).create(vals)
 
+class CodigoAporte(models.Model) :
+    _name = 'docentes.codigo.aporte'
+    _rec_name = 'codigo'
+
+    codigo = fields.Char(string='Codigo', required=True)
+    nombre = fields.Char(string='Nombre', required=True)
+    activo = fields.Boolean(string='Activo', default=True)

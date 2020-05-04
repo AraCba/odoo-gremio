@@ -151,6 +151,16 @@
     groups="group_usuarios_gremio" 
     sequence="10" action="action_aportes" />
 
+  <record model="ir.actions.act_window" id="action_codigo_aportes">
+    <field name="name">Códigos de aporte</field>
+    <field name="res_model">docentes.codigo.aporte</field>
+  </record>
+
+  <menuitem name="Codigos de aportes" id="codigo_aportes" 
+    parent="base.menu_docentes_aportes" 
+    groups="group_usuarios_gremio" 
+    sequence="15" action="action_codigo_aportes" />
+
   <record model="ir.actions.act_window" id="action_gestion_de_cambios">
     <field name="name">Gestión de cambios</field>
     <field name="res_model">docentes.gestion_de_cambios</field>

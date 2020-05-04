@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+  
   <!-- Vista de lista -->
 	<record model="ir.ui.view" id="bolsones_tree_view">
 		<field name="name">bolsones.tree</field>
 		<field name="model">docentes.bolsones</field>
 		<field name="arch" type="xml">
-			<tree string="Bolsones">
+			<tree string="Bolsones" create="false" edit="false">
 				<field name="solicitante" />
         <field name="menor" />
         <field name="nivel" />
@@ -19,7 +20,7 @@
     <field name="name">bolsones.pivot</field>
     <field name="model">docentes.bolsones</field>
     <field name="arch" type="xml">
-        <pivot string="Bolsones">
+        <pivot string="Bolsones" >
           <field name="solicitud" type="row"/>
           <field name="menor" type="col"/>
           <field name="nivel" type="col"/>
@@ -27,23 +28,5 @@
         </pivot>
     </field>
   </record>
-
-  <!-- <record model="ir.actions.act_window" id="action_bolsones">
-    <field name="name">Tabla de bolsones</field>
-    <field name="res_model">docentes.bolsones</field>
-    <field name="view_mode">tree,pivot</field>
-  </record> -->
-
-  <!-- Menu Izquierdo  -->
-  <!-- <record model="ir.actions.act_window" id="action_bolsones">
-    <field name="name">Bolsones</field>
-    <field name="res_model">docentes.bolsones</field>
-    <field name="view_mode">tree,pivot</field>
-  </record>
-
-  <menuitem name="Bolsones" id="menu_docentes_bolsones" 
-    parent="base.menu_docentes_accion_social" 
-    groups="base.group_gestion_solicitudes" 
-    sequence="30" action="action_bolsones" /> -->
 
 </odoo>

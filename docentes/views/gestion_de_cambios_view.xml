@@ -33,7 +33,7 @@
         <field name="name">gestion_de_cambios.tree</field>
         <field name="model">docentes.gestion_de_cambios</field>
         <field name="arch" type="xml">
-            <tree string="Gestión de cambios">
+            <tree string="Gestión de cambios" create="false" edit="false">
                 <field name="docente"/>
                 <field name="situacion"/>
                 <field name="fecha_consulta"/>
@@ -49,7 +49,7 @@
         <field name="name">gestion_de_cambios_docentes_aportes.form</field>
         <field name="model">docentes.gestion_de_cambios</field>
         <field name="arch" type="xml">
-            <form string="Gestión de cambios">
+            <form string="Gestión de cambios" >
                 <field name="docente"/>
                 <field name="situacion"/>
                 <field name="fecha_consulta"/>
