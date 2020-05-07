@@ -3,7 +3,7 @@
 
   <!-- Vista de formulario -->
   <record model="ir.ui.view" id="cargos_form_view">
-    <field name="name">Cargo</field>
+    <field name="name">Cargo docente</field>
     <field name="model">docentes.cargo</field>
     <field name="arch" type="xml">
       <form string="Cargos">
@@ -24,7 +24,7 @@
 
   <!-- Vista de lista -->
   <record model="ir.ui.view" id="cargos_tree_view">
-    <field name="name">cargos.tree.view</field>
+    <field name="name">Cargos docentes</field>
     <field name="model">docentes.cargo</field>
     <field name="arch" type="xml">
       <tree string="Cargos">
@@ -61,7 +61,7 @@
 
   <!-- Vista de lista -->
   <record model="ir.ui.view" id="tipo_cargo_tree_view">
-    <field name="name">tipo.cargos.tree.view</field>
+    <field name="name">Tipos de cargo</field>
     <field name="model">docentes.tipo.cargo</field>
     <field name="arch" type="xml">
       <tree string="Tipo de cargos">
@@ -94,10 +94,10 @@
 
   <!-- Vista de lista -->
   <record model="ir.ui.view" id="caracter_cargo_tree_view">
-    <field name="name">caracter.cargo.tree.view</field>
-    <field name="model">docentes.tipo.cargo</field>
+    <field name="name">Caracter de cargo</field>
+    <field name="model">docentes.caracter.cargo</field>
     <field name="arch" type="xml">
-      <tree string="Tipo de cargos">
+      <tree string="Caracter de cargos">
         <field name="name" />
         <field name="codigo" />
       </tree>
@@ -126,7 +126,7 @@
 
   <!-- Vista de lista -->
   <record model="ir.ui.view" id="dependencia_cargo_tree_view">
-    <field name="name">dependencia.cargo.tree.view</field>
+    <field name="name">Dependencia de cargos</field>
     <field name="model">docentes.dependencia.cargo</field>
     <field name="arch" type="xml">
       <tree string="Dependencia de cargos">

@@ -51,8 +51,8 @@ class DocentesAportes(models.Model):
     nombre = fields.Char('Nombre', size=30, required=True)
     cuil = fields.Char('Cuil')
     fecha = fields.Date('Fecha', required=True)
-    codigo = fields.Selection(TIPO_APORTE,'Codigo', required=True)
-    codigo_bis = fields.Many2one('docentes.codigo.aporte', string='Código')
+    codigo = fields.Selection(TIPO_APORTE,'Codigo')
+    codigo_bis = fields.Many2one('docentes.codigo.aporte', string='Código_bis')
     aporte = fields.Float('Aporte', required=True)
 
     @api.model
@@ -74,29 +74,17 @@ class DocentesAportes(models.Model):
                 'nombre': docente.name,
                 'legajo': docente.legajo
                 })
-
+        
+        # Se esta creando por importacion
         else:
-            docente_dic = {
-                'legajo': vals['legajo']
-            }
+            partner = self.env['res.partner'].search([['legajo','=',vals['legajo']]])
+            if partner.id == 0 :
+                docente = {'legajo': vals['legajo'], 'name': vals['nombre'], 'estado': 'nuevo', 'esdocente': True}
+                if vals['cuil']:
+                    docente.update({'vat': vals['cuil']})
+                partner = self.env['res.partner'].create(docente)
 
-            if vals['cuil']:
-               docente = docentes.get_create(
-                    objeto_dic=docente_dic,
-                    estado='nuevo',
-                    name=vals['nombre'],
-                    vat=vals['cuil']
-                    )
-            else:
-                docente = docentes.get_create(
-                    objeto_dic=docente_dic,
-                    estado='nuevo',
-                    name=vals['nombre']
-                    )
-
-            vals.update({
-                'docente': docente.id,
-                })
+            vals.update({'docente': partner.id})
 
         aporte = Base(self.env['docentes.aportes']).get(vals)
 

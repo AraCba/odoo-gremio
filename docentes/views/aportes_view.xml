@@ -6,7 +6,7 @@
         <field name="model">docentes.aportes</field>
         <field name="arch" type="xml">
             <tree string="Aportes">
-                <field name="docente_bis"/>
+                <field name="docente"/>
                 <field name="legajo"/>
                 <field name="fecha"/>
                 <field name="codigo_bis"/>
@@ -22,7 +22,7 @@
             <form string="Aporte">
                 <sheet>
                     <group>
-                        <field name="docente_bis"/>
+                        <field name="docente"/>
                         <field name="fecha"/>
                         <field name="codigo_bis"/>
                         <field name="aporte"/>

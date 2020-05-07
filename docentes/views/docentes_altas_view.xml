@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+  <record model="ir.ui.view" id="view_docentes_altas_tree">
+    <field name="name">Nuevos docentes</field>
+    <field name="model">res.partner</field>
+    <field name="arch" type="xml">
+        <tree string="Docentes" create="false">
+            <field name="legajo" string="Legajo"/>
+            <field name="name" string="Nombre"/>
+            <field name="vat" string="CUIT"/>    
+            <field name="estado" string="Estado"/>
+            <field name="esdocente" string="Docente"/>
+        </tree>
+    </field>
+  </record>
+
 </odoo>

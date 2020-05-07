@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- <menuitem name="Docentes" id="base.menu_docentes" sequence="5" />
-    <menuitem name="Configuracion" id="base.menu_docentes_configuracion" groups="base.group_system" sequence="30" parent="base.menu_docentes" /> -->
     
     <!-- Filtros -->
     <record id="view_res_partner_docentes_filter" model="ir.ui.view">
@@ -38,8 +36,8 @@
     </record>
 
     <!-- Vista de tree -->
-    <record model="ir.ui.view" id="view_docentes_tree">
-        <field name="name">Docentes</field>
+    <record model="ir.ui.view" id="docentes_tree_view">
+        <field name="name">Arbol docentes</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree string="Docentes">
@@ -55,7 +53,7 @@
 
     <!-- Vista de pivot -->
     <record model="ir.ui.view" id="docentes_pivot_view">
-        <field name="name">docentes.pivot</field>
+        <field name="name">Pivote docente</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <pivot string="Docentes">
@@ -68,46 +66,24 @@
         </field>
     </record>
 
-    <!-- <record model="ir.actions.act_window" id="action_docentes">
-        <field name="name">Docentes</field>
-        <field name="res_model">res.partner</field>
-        <field name="search_view_id" ref="view_res_partner_docentes_filter" />
-        <field name="domain">[('esdocente','=',True)]</field>
-    </record>
-
-    <record model="ir.actions.act_window.view" id="action_docentes_view_tree">
-        <field name="sequence" eval="1" />
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="view_docentes_tree" />
-        <field name="act_window_id" ref="action_docentes" />
-    </record>
-
-    <record model="ir.actions.act_window.view" id="action_docentes_view_form">
-        <field name="sequence" eval="2" />
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="base.view_partner_form" />
-        <field name="act_window_id" ref="action_docentes" />
-    </record>
-
-    <menuitem name="Docentes" id="base.menu_docentes_main" sequence="1" parent="base.menu_docentes" />
-    <menuitem name="Listado de docentes" id="base.menu_listado_docentes" sequence="1" parent="base.menu_docentes_main" action="action_docentes" /> -->
-
     <!-- Vista de Form -->
-    <record model="ir.ui.view" id="view_partner_form">
-        <field name="name">res.partner.form.inherit</field>
+    <record model="ir.ui.view" id="docentes_form_view">
+        <field name="name">Formulario docente</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="mode">primary</field>
         <field name="arch" type="xml">
-            <field name="is_company" position="after">
-                <field name="esdocente" on_change="onchange_type(esdocente)" class="oe_inline" />
-                <label for="esdocente" string="¿Es docente?" />
-            </field>
+
+            <xpath expr="//form/sheet/group/group/field[@name='vat']" position="replace">
+                <field name="vat" string="CUIL/CUIT" />
+            </xpath>
+
             <field name="email" position="after">
                 <field name="email2" widget="email" />
                 <field name="etiq_docente" widget="many2many_tags" groups="docentes.group_administradores_gremio"/>
             </field>
             <notebook position="inside">
-                <page string="Docente" attrs="{'invisible': [('esdocente','=',False),('estado','!=','nuevo')]}">
+                <page string="Docente" >
                     <group>
                         <p>
                             <button name="funcionSolicitarAfiliacion" groups="base.group_docentes_administracion_de_afiliados" type="object" attrs="{'invisible': [('estado','!=', 'none'),('estado','!=', 'baja'),('estado','!=', 'hist')]}" string="Afiliar" />
@@ -131,7 +107,7 @@
                     </group>
                     <group>
                         <group>
-                            <field name="legajo" readonly="1" />
+                            <field name="legajo" attrs="{'readonly': [('id','>', 0)]}"/>
                             <field name="tipodni" />
                             <field name="dni" />
                             <field name="estadocivil" />
@@ -152,7 +128,7 @@
                     </group>
                 </page>
 
-                <page string="Aportes" attrs="{'invisible': [('esdocente','=',False)]}">
+                <page string="Aportes" >
                     <field name="aportes">
                         <tree string="aportes">
                             <field name="fecha" />
@@ -162,7 +138,7 @@
                     </field>
                 </page>
 
-                <page string="Menores a cargo" attrs="{'invisible': [('esdocente','=',False)]}">
+                <page string="Menores a cargo" >
                     <field name="hijo_id">
                         <tree string="hijos">
                             <field name="name" />

@@ -22,3 +22,12 @@ class Docente(models.Model):
                 result.append((record.id, record.name))
 
         return result
+
+    # @api.model
+    # def create(self, vals):
+    #     if 'esdocente' not in vals :
+    #         vals.update({'esdocente': True})
+    #     else :
+    #         vals['esdocente'] = True
+    #     docente = super(Docente, self).create(vals)
+    #     return docente

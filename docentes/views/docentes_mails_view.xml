@@ -32,14 +32,13 @@
         <field name="name">Docentes Mails</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <tree string="Docentes">
-                <field name="legajo"/>
+            <tree string="Docentes" create="false" edit="false">
                 <field name="name"/>
-                <field name="email"/>
-                <field name="email2"/>
+                <field name="email" string="Correo"/>
+                <field name="email2" string="Correo alernativo"/>
+                <field name="phone"/>
+                <field name="mobile"/>
                 <field name="estado"/>
-                <field name="fecha_alta"/>
-                <field name="fecha_baja"/>
             </tree>
         </field>
     </record>

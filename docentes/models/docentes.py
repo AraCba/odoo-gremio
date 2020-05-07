@@ -23,8 +23,7 @@ import time
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
-#from odoo.addons.docentes.models.base import Base
-
+# from odoo.addons.docentes.models.base import Base
 
 
 NONE = 'none'
@@ -59,12 +58,12 @@ STATE = [
     (CONTRATADE, 'Contratade no cotizante')
 ]
 
-
-
-
-TIPODOC = [('dni','DNI'),('lc','LC'),('le','LE'),('pas','PAS'),('ci','CI')]
-ESTCIV = [('c', 'Casada/o'),('s','Soltera/o'), ('u', 'Unida/o'),('v', 'Viuda/o'),('d', 'Divorciada/o'),('p','Separada/o'),('n','Prefiere no decirlo')]
-SEXO = [('f', 'Femenino'),('m','Masculino'), ('o', 'Otro'),('n','Prefiere no decirlo')]
+TIPODOC = [('dni', 'DNI'), ('lc', 'LC'), ('le', 'LE'),
+           ('pas', 'PAS'), ('ci', 'CI')]
+ESTCIV = [('c', 'Casada/o'), ('s', 'Soltera/o'), ('u', 'Unida/o'), ('v', 'Viuda/o'),
+          ('d', 'Divorciada/o'), ('p', 'Separada/o'), ('n', 'Prefiere no decirlo')]
+SEXO = [('f', 'Femenino'), ('m', 'Masculino'),
+        ('o', 'Otro'), ('n', 'Prefiere no decirlo')]
 
 
 class Partner(models.Model):
@@ -74,126 +73,155 @@ class Partner(models.Model):
 
     email2 = fields.Char('Otro Correo electrónico', size=240)
     esdocente = fields.Boolean('¿Es docente?',
-      default=False)
-    legajo = fields.Integer('Legajo', readonly=True)
-    tipodni = fields.Selection(TIPODOC,'Tipo doc')
+                               default=False)
+    legajo = fields.Integer(string='Legajo')
+    tipodni = fields.Selection(TIPODOC, 'Tipo doc')
     dni = fields.Integer('N documento')
-    estadocivil = fields.Selection(ESTCIV,'Estado civil')
-    sexo = fields.Selection(SEXO,'Sexo')
+    estadocivil = fields.Selection(ESTCIV, 'Estado civil')
+    sexo = fields.Selection(SEXO, 'Sexo')
     fecha_nacimiento = fields.Date('Fecha de nacimiento')
-    pais = fields.Many2one('res.country','País de nacimiento')
+    pais = fields.Many2one('res.country', 'País de nacimiento')
     afiliado = fields.Integer('N afiliado')
-    afiliados_ant = fields.Char('N afiliado anteriores',size=240,readonly=True)
-    fecha_alta = fields.Date('Fecha de alta',readonly=True)
-    fecha_baja = fields.Date('Fecha de baja',readonly=True)
+    afiliados_ant = fields.Char(
+        'N afiliado anteriores', size=240, readonly=True)
+    fecha_alta = fields.Date('Fecha de alta', readonly=True)
+    fecha_baja = fields.Date('Fecha de baja', readonly=True)
     antiguedad = fields.Date('Antigüedad')
     estado = fields.Selection(STATE,
-      string='Estado de afiliación',
-      readonly=True,
-      default=NONE)
+                              string='Estado de afiliación',
+                              readonly=True,
+                              default=NONE)
     observado = fields.Boolean('Observado?')
     observacion = fields.Char('Observación', size=240)
-    aportes = fields.One2many('docentes.aportes', 'docente', string='Aportes docente')
-#para docentes
+    aportes = fields.One2many(
+        'docentes.aportes', 'docente', string='Aportes docente')
+
+    # para docentes
     hijo_id = fields.Many2many('docentes.hijos', column1='partner_id',
-                                    column2='hijo_id', string='Menores a cargo')
+                               column2='hijo_id', string='Menores a cargo')
 
     etiq_docente = fields.Many2many(
         'docentes.etiqueta', 'docente_etiqueta_rel', 'partner_id', 'etiqueta_id',
-        string='Etiquetas docentes')
+        string='Etiquetas bis')
+    
 
+    @api.model
+    def create(self, vals):
+        # Si viene el campo esdocente en el contexto, entonces tiene que venir el legajo
+        if 'esdocente' in self.env.context and ('legajo' not in vals or vals['legajo'] < 1) :
+            raise ValidationError('Los docentes deben tener legajo. Cárguelo desde la pestaña Docentes')
+        
+        # Chequeo de legajo repetido
+        if 'esdocente' in self.env.context and 'legajo' in vals :
+            docente = self.env['docentes.docente'].search([['legajo','=',vals['legajo']]])
+            if docente.id :
+                raise ValidationError('Ya existe un docente con ese legajo')
+
+        partner = super(Partner, self).create(vals)
+
+        # Se crea la entrada en la tabla docentes
+        if 'esdocente' in self.env.context :
+            self.env['docentes.docente'].create({'legajo': vals['legajo'], 'partner_id': partner.id})
+
+        return partner
+
+    # @api.multi
+    # def write(self, vals):
+    #     partner = super(Partner, self).write(vals)
+    #     return partner
 
     def _solicitarCambio(self, **args):
-      # El método self.write actualiza el campo en la interfaz
-      self.write(args)
-      return True
+        # El método self.write actualiza el campo en la interfaz
+        self.write(args)
+        return True
 
     @api.multi
     def funcionSolicitarAfiliacion(self):
-      return self._solicitarCambio(
-              estado=PEND_A,
-              fecha_alta=time.strftime('%Y-%m-%d')
-            )
+        return self._solicitarCambio(
+            estado=PEND_A,
+            fecha_alta=time.strftime('%Y-%m-%d')
+        )
 
     @api.multi
     def funcionSolicitarDesafiliacion(self):
-      today = time.strftime('%Y-%m-%d')
-      return self._solicitarCambio(estado=PEND_B, fecha_baja=today)
+        today = time.strftime('%Y-%m-%d')
+        return self._solicitarCambio(estado=PEND_B, fecha_baja=today)
 
     @api.multi
     def funcionConfirmarAfiliacion(self):
-      # El método self.write actualiza el campo en la interfaz
-      reads = self.read(['afiliados_ant', 'afiliado'])
-      for record in reads:
+        # El método self.write actualiza el campo en la interfaz
+        reads = self.read(['afiliados_ant', 'afiliado'])
+        for record in reads:
             afil = str(record['afiliado'])
             if record['afiliados_ant']:
                 afil = record['afiliados_ant'] + ', ' + afil
-      self.write({'estado': ACTIVO,'afiliados_ant': afil})
-      return True # Siempre tenemos que retornar True al final de la declaración
-    
+        self.write({'estado': ACTIVO, 'afiliados_ant': afil})
+        return True  # Siempre tenemos que retornar True al final de la declaración
+
     @api.multi
     def funcionConfirmarDesafiliacion(self):
-      return self._solicitarCambio(estado=BAJA)
+        return self._solicitarCambio(estado=BAJA)
 
-    @api.multi 
+    @api.multi
     def funcionActivoaPasivo(self):
-      return self._solicitarCambio(estado=PASIVO)
+        return self._solicitarCambio(estado=PASIVO)
 
     @api.multi
     def funcionActivoaJubilado(self):
-      return self._solicitarCambio(estado=JUB)
+        return self._solicitarCambio(estado=JUB)
 
     @api.multi
     def funcionPasivoaActivo(self):
-      return self._solicitarCambio(estado=ACTIVO)
+        return self._solicitarCambio(estado=ACTIVO)
 
-    @api.multi 
+    @api.multi
     def funcionPasivoaHistorico(self):
-      return self._solicitarCambio(estado=HIST)
-    
-    @api.multi 
+        return self._solicitarCambio(estado=HIST)
+
+    @api.multi
     def funcionJubiladoaHistorico(self):
-      return self._solicitarCambio(estado=HIST) # Siempre tenemos que retornar True al final de la declaración
+        # Siempre tenemos que retornar True al final de la declaración
+        return self._solicitarCambio(estado=HIST)
 
     @api.multi
     def funcionJubiladoaCotizante(self):
-      return self._solicitarCambio(estado=JUBA)
+        return self._solicitarCambio(estado=JUBA)
 
     @api.multi
     def funcionJubiladoaNoCotizante(self):
-      return self._solicitarCambio(estado=JUB)
+        return self._solicitarCambio(estado=JUB)
 
     @api.multi
     def funcionPasivoaCotizante(self):
-      return self._solicitarCambio(estado=ACTIVO)
+        return self._solicitarCambio(estado=ACTIVO)
 
     @api.multi
     def funcionJubilar(self):
-      return self._solicitarCambio(estado=JUB)
+        return self._solicitarCambio(estado=JUB)
 
     @api.multi
     def funcionAfiladoaNoCotizante(self):
-      return self._solicitarCambio(estado=PASIVO)
+        return self._solicitarCambio(estado=PASIVO)
 
     @api.multi
     def funcionBecario(self):
-      return self._solicitarCambio(estado=BECARIE)
+        return self._solicitarCambio(estado=BECARIE)
 
     @api.multi
     def funcionBecarioaActivo(self):
-      return self._solicitarCambio(estado=BECARIEA)
+        return self._solicitarCambio(estado=BECARIEA)
 
     @api.multi
     def funcionContratado(self):
-      return self._solicitarCambio(estado=CONTRATADE)
+        return self._solicitarCambio(estado=CONTRATADE)
 
     @api.multi
     def funcionContratadoaActivo(self):
-      return self._solicitarCambio(estado=CONTRATADEA)
-    
+        return self._solicitarCambio(estado=CONTRATADEA)
+
     @api.multi
     def funcionCrearDocente(self):
-      return self._solicitarCambio(estado=NONE, esdocente=True)
+        return self._solicitarCambio(estado=NONE, esdocente=True)
 
 #    @api.multi
 #    def write(self, vals):
@@ -206,7 +234,7 @@ class Partner(models.Model):
 #      return super(Partner, self).write(vals)
 
 
-#Partner()
+# Partner()
 
 class DocentesHijos(models.Model):
     """
@@ -220,7 +248,8 @@ class DocentesHijos(models.Model):
 #        string='Docente',
 #        ondelete='cascade')
 
-    padres = fields.Many2many('res.partner', column1='hijo_id', column2='partner_id', string='Padres')
+    padres = fields.Many2many(
+        'res.partner', column1='hijo_id', column2='partner_id', string='Padres')
 
     name = fields.Char('Nombre', size=30, required=True)
     dni = fields.Integer('N documento', required=True)
@@ -231,10 +260,11 @@ class DocentesHijos(models.Model):
 
 #    bolsones = fields.One2many('docentes.bolsones', 'hijo', string='Bolsones')
 
-    #para bolsones
+    # para bolsones
 #    bolsones = fields.Many2one('docentes.bolsones', string='Docente', ondelete='cascade')
 
-class EtiquetaDocente(models.Model) :
-  _name = 'docentes.etiqueta'
 
-  name = fields.Char(string="Nombre")
+class EtiquetaDocente(models.Model):
+    _name = 'docentes.etiqueta'
+
+    name = fields.Char(string="Nombre")
