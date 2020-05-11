@@ -100,29 +100,46 @@ class Partner(models.Model):
     hijo_id = fields.Many2many('docentes.hijos', column1='partner_id',
                                column2='hijo_id', string='Menores a cargo')
 
-    etiq_docente = fields.Many2many(
+    etiq_bis = fields.Many2many(
         'docentes.etiqueta', 'docente_etiqueta_rel', 'partner_id', 'etiqueta_id',
         string='Etiquetas bis')
+    etiq_bis_import = fields.Char(string="etiq_bis_import")
     
 
     @api.model
     def create(self, vals):
-        # Si viene el campo esdocente en el contexto, entonces tiene que venir el legajo
-        if 'esdocente' in self.env.context and ('legajo' not in vals or vals['legajo'] < 1) :
-            raise ValidationError('Los docentes deben tener legajo. Cárguelo desde la pestaña Docentes')
-        
-        # Chequeo de legajo repetido
-        if 'esdocente' in self.env.context and 'legajo' in vals :
-            docente = self.env['docentes.docente'].search([['legajo','=',vals['legajo']]])
-            if docente.id :
-                raise ValidationError('Ya existe un docente con ese legajo')
+        # Si viene el campo esdocente en el contexto
+        if 'esdocente' in self.env.context :
+            vals.update({'esdocente': True})
+            
+            # Falta legajo?
+            if ('legajo' not in vals or vals['legajo'] < 1) :
+                raise ValidationError('Los docentes deben tener legajo. Cárguelo desde la pestaña Docentes')
+            else : # Chequeo de legajo repetido
+                docente = self.env['docentes.docente'].search([['legajo','=',vals['legajo']]])
+                if docente.id :
+                    raise ValidationError('Ya existe un docente con ese legajo')
+
+        # Si se esta importando por csv
+        if 'import_file' in self.env.context :
+            vals.update({'estado': NUEVO})
+            vals.update({'esdocente': True})
+            if 'etiq_bis_import' in vals :
+                doc_tags = []
+                tags = vals['etiq_bis_import'].split(",")
+                for tag in tags :
+                    exist = self.env['docentes.etiqueta'].search([['name','=',tag]])
+                    if exist.id < 1:
+                        exist = self.env['docentes.etiqueta'].create({'name':tag})
+                    doc_tags.append(exist.id)
+                vals.update({'etiq_bis':[(6, _, doc_tags)]})
 
         partner = super(Partner, self).create(vals)
 
         # Se crea la entrada en la tabla docentes
         if 'esdocente' in self.env.context :
             self.env['docentes.docente'].create({'legajo': vals['legajo'], 'partner_id': partner.id})
-
+  
         return partner
 
     # @api.multi

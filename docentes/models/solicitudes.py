@@ -220,6 +220,14 @@ class DocentesSolicitudes(models.Model):
         recipients[self.id].append((self.docente.id, self.docente.name, 'Solicitante'))
         return recipients
 
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self :
+            result.append((record.tipo_solicitud, record.docente))
+
+        return result
+
 
 class DocentesBolsones(models.Model):
     """
@@ -288,8 +296,9 @@ class TipoSolicitud(models.Model):
     def write(self, vals):
         for record in self :
             # Borro los espacios en blanco de los grupos 
-            _grupos = (vals['grupos']+ '.')[:-1] #Creo una copia del valor
-            vals['grupos'] = _grupos.replace(" ", "")
+            if 'grupos' in vals :
+                _grupos = (vals['grupos']+ '.')[:-1] #Creo una copia del valor
+                vals['grupos'] = _grupos.replace(" ", "")
 
         tipo = super(TipoSolicitud, self).write(vals)
         return tipo

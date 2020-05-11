@@ -3,7 +3,7 @@
     
     <!-- Filtros -->
     <record id="view_res_partner_docentes_filter" model="ir.ui.view">
-        <field name="name">res.partner.select.inherit</field>
+        <field name="name">Filtro docentes</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <search string="Docentes">
@@ -80,7 +80,7 @@
 
             <field name="email" position="after">
                 <field name="email2" widget="email" />
-                <field name="etiq_docente" widget="many2many_tags" groups="docentes.group_administradores_gremio"/>
+                <field name="etiq_bis" widget="many2many_tags" groups="docentes.group_administradores_gremio"/>
             </field>
             <notebook position="inside">
                 <page string="Docente" >

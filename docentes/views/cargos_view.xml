@@ -9,7 +9,7 @@
       <form string="Cargos">
         <sheet>
           <group>
-            <field name="docente" />
+            <field name="docente" domain="[('esdocente', '=', True)]"/>
             <field name="tipo_cargo" />
             <field name="nro_cargo" />
             <field name="cant_horas" />

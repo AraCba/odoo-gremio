@@ -22,7 +22,7 @@
             <form string="Aporte">
                 <sheet>
                     <group>
-                        <field name="docente"/>
+                        <field name="docente" domain="[('esdocente', '=', True)]"/>
                         <field name="fecha"/>
                         <field name="codigo_bis"/>
                         <field name="aporte"/>

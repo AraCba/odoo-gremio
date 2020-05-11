@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <tree string="Solicitudes">
                 <field name="docente"/>
-                <field name="docente_bis"/>
+                <!-- <field name="docente_bis"/> -->
                 <field name="state"/>
                 <field name="tipo_solicitud"/>
                 <field name="fecha_sol"/>
@@ -41,7 +41,7 @@
                             <field name="mostrar_notas" invisible="1" />
                             <field name="tipo_solicitud" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}" domain="[('activo','=',True)]"/>
                             <field name="docente" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>   
-                            <field name="docente_bis" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>                              
+                            <!-- <field name="docente_bis" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>                               -->
                             <field name="doc_completa" attrs="{'readonly': [('state', 'not in', ['nue','sol','aut'])]}"/>
                             <field name="expediente_resolucion" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/>
                             <!-- <field name="resolucion" attrs="{'readonly': [('state', 'not in', ['nue','sol'])]}"/> -->

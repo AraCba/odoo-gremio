@@ -11,10 +11,14 @@
   <record model="ir.actions.act_window" id="action_docentes">
     <field name="name">Listado de docentes</field>
     <field name="res_model">res.partner</field>
-    <!-- <field name="view_id" ref="view_docentes_tree"/>
-    <field name="view_mode">tree,pivot,form</field> 
-    <field name="search_view_id" ref="view_res_partner_docentes_filter"/> -->
-    <field name="views">[["docentes_tree_view","tree"],["docentes_form_view","form"],["docentes_pivot_view","pivot"]]</field>
+    <!-- <field name="view_id" ref="docentes_tree_view"/> -->
+    <!-- <field name="view_mode">tree,pivot,form</field>  -->
+    <field name="search_view_id" ref="view_res_partner_docentes_filter"/>
+    <!-- <field name="views">[["docentes_tree_view","tree"],["docentes_form_view","form"],["docentes_pivot_view","pivot"]]</field> -->
+    <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('docentes_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('docentes_form_view')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('docentes_pivot_view')})]"/>
     <field name="domain">[['esdocente','=',True]]</field>
     <field name="context">{'esdocente':True}</field>
   </record>
