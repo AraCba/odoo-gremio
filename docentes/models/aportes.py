@@ -44,9 +44,9 @@ class DocentesAportes(models.Model):
     docente = fields.Many2one('res.partner',
         string='Docente',
         ondelete='cascade')
-    docente_bis = fields.Many2one('docentes.docente',
-        string='Docente',
-        ondelete='cascade')
+    # docente_bis = fields.Many2one('docentes.docente',
+    #     string='Docente',
+    #     ondelete='cascade')
     legajo = fields.Integer('Legajo', required=True)
     nombre = fields.Char('Nombre', size=30, required=True)
     cuil = fields.Char('Cuil')

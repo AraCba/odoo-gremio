@@ -41,5 +41,5 @@ class Cargo(models.Model) :
   etiqueta = fields.Many2many(
         'docentes.etiqueta.cargo', 'docente_etiqueta_cargo_rel', 'cargo_id', 'etiqueta_cargo_id',
         string='Etiquetas')
-  # docente = fields.Many2one('res.partner', string='Docente')
-  docente = fields.Many2one('docentes.docente', string='Docente', required=True)
+  docente = fields.Many2one('res.partner', string='Docente')
+  # docente_bis = fields.Many2one('docentes.docente', string='Docente')
