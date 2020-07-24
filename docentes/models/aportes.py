@@ -80,7 +80,7 @@ class DocentesAportes(models.Model):
             partner = self.env['res.partner'].search([['legajo','=',vals['legajo']]])
             if partner.id == 0 :
                 docente = {'legajo': vals['legajo'], 'name': vals['nombre'], 'estado': 'nuevo', 'esdocente': True}
-                if vals['cuil']:
+                if 'cuil' in vals:
                     docente.update({'vat': vals['cuil']})
                 partner = self.env['res.partner'].create(docente)
 

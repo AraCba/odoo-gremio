@@ -147,17 +147,17 @@ class Partner(models.Model):
     #     partner = super(Partner, self).write(vals)
     #     return partner
 
-    @api.multi
-    def name_get(self):
-        result = []
-        for record in self :
-            # Si estoy importando por csv, entonces busco por legajo
-            if 'import_file' in self.env.context :
-                result.append((record.id, record.legajo))
-            else :
-                result.append((record.id, record.name))
+    # @api.multi
+    # def name_get(self):
+    #     result = []
+    #     for record in self :
+    #         # Si estoy importando por csv, entonces busco por legajo
+    #         if 'import_file' in self.env.context :
+    #             result.append((record.id, record.legajo))
+    #         else :
+    #             result.append((record.id, record.name))
 
-        return result
+    #     return result
 
     def _solicitarCambio(self, **args):
         # El método self.write actualiza el campo en la interfaz
