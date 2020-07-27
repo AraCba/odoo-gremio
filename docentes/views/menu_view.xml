@@ -58,6 +58,21 @@
     action="action_docentes_altas" 
     groups="group_usuarios_gremio"/>
 
+  <record model="ir.actions.act_window" id="action_docentes_etiquetas">
+    <field name="name">Etiquetas Docentes</field>
+    <field name="res_model">docentes.etiqueta</field>
+    <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('docentes_etiquetas_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('docentes_etiquetas_form_view')})]"/>
+    <!-- <field name="domain">[('estado','=','nuevo')]</field> -->
+    <!-- <field name="context">{'esdocente':True}</field> -->
+  </record>
+
+  <menuitem name="Etiquetas bis" id="docentes_etiquetas_bis" 
+    parent="base.menu_docentes_main" sequence="40" 
+    action="action_docentes_etiquetas" 
+    groups="group_usuarios_gremio"/>
+
   <!-- Menu cargos -->
   <menuitem name="Cargos docentes" id="base.menu_docentes_cargos" 
     sequence="10" parent="base.menu_docentes"/>

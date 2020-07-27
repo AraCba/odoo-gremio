@@ -156,7 +156,6 @@ class Partner(models.Model):
     #             result.append((record.id, record.legajo))
     #         else :
     #             result.append((record.id, record.name))
-
     #     return result
 
     def _solicitarCambio(self, **args):
@@ -296,4 +295,6 @@ class DocentesHijos(models.Model):
 class EtiquetaDocente(models.Model):
     _name = 'docentes.etiqueta'
 
-    name = fields.Char(string="Nombre")
+    name = fields.Char(string="Nombre", required=True)
+    activo = fields.Boolean(string="Activo", default=True)
+    parent_id = fields.Many2one('docentes.etiqueta', string='Etiqueta padre', ondelete='cascade')
